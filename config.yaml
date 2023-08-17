@@ -1,0 +1,7 @@
+path: C:/Users/ChiaChungLim/PycharmProjects/Medical-Policy-Identification/data
+train: train.txt # train images
+val: train.txt # val images
+
+# Classes
+nc: 1 # Number of classes
+names: ['table']  # List of class names
