@@ -2,26 +2,35 @@ import os
 import cv2
 import numpy as np
 
-train_file = 'data/train.txt'
+train_file = r'HB-yolo 1.1/train.txt'
 
 # Define your data directories
-image_dir = 'train_data/images'
-annotation_dir = 'train_data/annotations'
-output_image_dir = 'augmented_data/images'
-output_annotation_dir = 'augmented_data/annotations'
+image_dir = 'HB-yolo 1.1/obj_annotated_data/images'
+annotation_dir = 'HB-yolo 1.1/obj_annotated_data/annotations'
+output_dir = 'HB-yolo 1.1/obj_train_data/'
 
-
-# Function to read image and bounding box annotations
-def read_image_and_annotations(img_path, ann_path):
+'''
+Read image and bounding box annotations from files.
+@:param img_path (str): Path to the image file.
+@:param ann_path (str): Path to the annotation file.
+@:return tuple: A tuple containing the following elements:
+            - img (numpy.ndarray): The image read using OpenCV.
+            - bboxes (list): A list of bounding box annotations, where each annotation is a list [cid, xpoint, ypoint, width, height].
+'''
+def ReadImageAndAnnotations(img_path, ann_path):
     img = cv2.imread(img_path)
+
     bboxes = []
 
     with open(ann_path, "r") as fp:
         lines = fp.readlines()
+
         for line in lines:
+            # Split the line into individual values and convert them to floats
             cid, xpoint, ypoint, width, height = map(float, line.strip().split())
             bboxes.append([cid, xpoint, ypoint, width, height])
 
+    # Return the image and the list of bounding box annotations as a tuple
     return img, bboxes
 
 
@@ -66,14 +75,14 @@ for image_name in os.listdir(image_dir):
     print(f'annotation_name:{annotation_name}')
     print(f'annotation_path:{annotation_path}')
 
-    image, bboxes = read_image_and_annotations(image_path, annotation_path)
+    image, bboxes = ReadImageAndAnnotations(image_path, annotation_path)
 
     for i in range(5):  # Augment each image 5 times
         augmented_image, augmented_bboxes = apply_augmentation(image, bboxes)
 
         # Save the augmented image and annotations
-        augmented_image_path = os.path.join(output_image_dir, f"{image_name[:-4]}_aug{i+1}.png")
-        augmented_annotation_path = os.path.join(output_annotation_dir, f"{annotation_name[:-4]}_aug{i+1}.txt")
+        augmented_image_path = os.path.join(output_dir, f"{image_name[:-4]}_aug{i + 1}.png")
+        augmented_annotation_path = os.path.join(output_dir, f"{annotation_name[:-4]}_aug{i + 1}.txt")
 
         cv2.imwrite(augmented_image_path, augmented_image)
 
@@ -83,7 +92,8 @@ for image_name in os.listdir(image_dir):
                 file.write(f"{class_id} {x} {y} {w} {h}\n")
 
 # Get a list of all text file names in the input directory
-text_file_names = [os.path.join('data/obj_train_data/', filename) for filename in os.listdir(output_annotation_dir) if filename.endswith('.txt')]
+text_file_names = [os.path.join(r'HB-yolo 1.1/obj_train_data/', filename) for filename in os.listdir(output_dir) if
+                   filename.endswith('.txt')]
 
 # Write the list of text file names to the "train.txt" file
 with open(train_file, 'w') as f:
@@ -91,5 +101,3 @@ with open(train_file, 'w') as f:
         f.write(filename + '\n')
 
 print("File names written to train.txt")
-
-
