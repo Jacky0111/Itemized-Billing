@@ -93,7 +93,7 @@ for image_name in os.listdir(image_dir):
 
 # Get a list of all text file names in the input directory
 text_file_names = [os.path.join(r'HB-yolo 1.1/obj_train_data/', filename) for filename in os.listdir(output_dir) if
-                   filename.endswith('.txt')]
+                   filename.endswith('.png')]
 
 # Write the list of text file names to the "train.txt" file
 with open(train_file, 'w') as f:
