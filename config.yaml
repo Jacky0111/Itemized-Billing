@@ -1,4 +1,4 @@
-path: C:/Users/ChiaChungLim/PycharmProjects/Medical-Policy-Identification/data
+path: C:/Users/ChiaChungLim/PycharmProjects/Medical-Policy-Identification/HB-yolo 1.1
 train: train.txt # train images
 val: train.txt # val images
 
