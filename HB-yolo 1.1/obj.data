@@ -1,4 +1,4 @@
 classes = 1
-train = data/train.txt
-names = data/obj.names
+train = HB-yolo 1.1/train.txt
+names = HB-yolo 1.1/obj.names
 backup = backup/
