@@ -22,8 +22,8 @@ def convert_pdf_to_images(pdf_path, output_folder):
 
 
 if __name__ == "__main__":
-    pdfs_folder = r'Hospital Bill'
-    images_output_folder = r'Images'
+    pdfs_folder = r'pdf'
+    images_output_folder = r'images'
 
     pdf_files = [file for file in os.listdir(pdfs_folder) if file.endswith('.pdf')]
 
