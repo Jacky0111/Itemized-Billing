@@ -42,12 +42,6 @@ def apply_augmentation(img, bboxes):
     rotation_matrix = cv2.getRotationMatrix2D((width / 2, height / 2), angle, 1)
     augmented_image = cv2.warpAffine(img, rotation_matrix, (width, height))
 
-    # Randomly apply horizontal flip (50% probability)
-    if np.random.rand() > 0.5:
-        augmented_image = cv2.flip(augmented_image, 1)
-        for bbox in bboxes:
-            bbox[1] = 1.0 - bbox[1]  # Adjust x-coordinate for flipped image
-
     # Randomly apply scaling (scale factor between 0.8 to 1.2)
     scale_factor = np.random.uniform(0.8, 1.2)
     scaled_width = int(width * scale_factor)
@@ -60,6 +54,11 @@ def apply_augmentation(img, bboxes):
         bbox[2] *= scale_y
         bbox[3] *= scale_x
         bbox[4] *= scale_y
+
+    # Randomly adjust brightness (change brightness by up to 30%)
+    brightness_factor = 1 + np.random.uniform(-0.3, 0.3)
+    augmented_image = augmented_image * brightness_factor
+    augmented_image = np.clip(augmented_image, 0, 255).astype(np.uint8)
 
     return augmented_image, bboxes
 
