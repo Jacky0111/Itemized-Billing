@@ -2,12 +2,12 @@ import os
 import cv2
 import numpy as np
 
-train_file = r'HB-yolo 1.1/train.txt'
+train_file = r'HB-yolo-1.1/train.txt'
 
 # Define your data directories
-image_dir = 'HB-yolo 1.1/obj_annotated_data/images'
-annotation_dir = 'HB-yolo 1.1/obj_annotated_data/annotations'
-output_dir = 'HB-yolo 1.1/obj_train_data/'
+image_dir = 'HB-yolo-1.1/obj_annotated_data/images'
+annotation_dir = 'HB-yolo-1.1/obj_annotated_data/annotations'
+output_dir = 'HB-yolo-1.1/obj_train_data/'
 
 '''
 Read image and bounding box annotations from files.
@@ -91,7 +91,7 @@ for image_name in os.listdir(image_dir):
                 file.write(f"{class_id} {x} {y} {w} {h}\n")
 
 # Get a list of all text file names in the input directory
-text_file_names = [os.path.join(r'HB-yolo 1.1/obj_train_data/', filename) for filename in os.listdir(output_dir) if
+text_file_names = [os.path.join(r'HB-yolo-1.1/obj_train_data/', filename) for filename in os.listdir(output_dir) if
                    filename.endswith('.png')]
 
 # Write the list of text file names to the "train.txt" file
