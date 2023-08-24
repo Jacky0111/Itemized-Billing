@@ -39,5 +39,6 @@ def main():
         print(f'{str(index + 1)}. {image_path}')
         deskew(image_path)
 
+
 if __name__ == "__main__":
     main()
