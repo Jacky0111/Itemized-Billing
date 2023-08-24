@@ -3,3 +3,4 @@
 *.yaml
 *.cache
 *.xml
+.idea/vcs.xml
