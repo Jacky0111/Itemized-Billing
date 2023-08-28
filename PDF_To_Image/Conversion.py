@@ -18,8 +18,6 @@ def convert_pdf_to_images(pdf_path, output_folder):
         img_path = os.path.join(output_folder_path, f'{pdf_name}_page_{idx + 1}.png')
         image.save(img_path, 'PNG')
 
-    print(f"{pdf_name}.pdf has been successfully converted to images.")
-
 
 if __name__ == "__main__":
     pdfs_folder = r'pdf'
