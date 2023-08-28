@@ -1,0 +1,11 @@
+*.pdf
+*.txt
+*.yaml
+*.cache
+*.xml
+config.yaml
+.idea/vcs.xml
+.idea/Itemized-Billing.iml
+.ipynb_checkpoints/yolov8-checkpoint.ipynb
+
+
