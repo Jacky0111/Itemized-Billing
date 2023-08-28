@@ -5,49 +5,40 @@ from skimage.color import rgb2gray
 from skimage.transform import rotate
 from deskew import determine_skew
 
-
+'''
+Deskews an image and saves it back to the input path.
+@:param input_path (str)
+'''
 def deskew(input_path):
+    # Load the image
     image = io.imread(input_path)
 
+    # Convert the image to grayscale
     grayscale = rgb2gray(image)
 
+    # Determine the skew angle of the image
     angle = determine_skew(grayscale)
+
+    # Rotate the image to correct the skew and scale it back to 8-bit
     rotated = rotate(image, angle, resize=True) * 255
     rotated = rotated.astype(np.uint8)
 
+    # Save the deskewed image back to the input path
     io.imsave(input_path, rotated)
 
 
-# input_image_path = 'HB-yolo-1.1/obj_train_data/BAGAN_001_aug3.png'
-# output_image_path = 'output_deskewed.png'
+def main():
+    directory = r'CVAT/Training Set'
 
-directory = r'CVAT/Training Set'
+    # List all the image files in the folder
+    images = [f for f in os.listdir(directory) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
-# List all the image files in the folder
-images = [f for f in os.listdir(directory) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    # Iterate through each image file and deskew
+    for index, img in enumerate(images):
+        image_path = os.path.join(directory, img)
+        print(f'{str(index + 1)}. {image_path}')
+        deskew(image_path)
 
-# Iterate through each image file and deskew
-for index, img in enumerate(images):
-    image_path = os.path.join(directory, img)
-    print(f'{str(index+1)}. {image_path}')
-    deskew(image_path)
 
-# def deskew(_img):
-#     image = io.imread(_img)
-#     grayscale = rgb2gray(image)
-#     angle = determine_skew(grayscale)
-#     rotated = rotate(image, angle, resize=True) * 255
-#     return rotated.astype(np.uint8)
-#
-#
-# def display_avant_apres(_original):
-#     plt.subplot(1, 2, 1)
-#     plt.imshow(io.imread(_original))
-#     deskewed_image = deskew(_original)
-#     plt.subplot(1, 2, 2)
-#     plt.imshow(deskewed_image)
-#     plt.show()
-#
-#     # Save the deskewed image
-#     output_path = 'output_deskewed.png'
-#     io.imsave(output_path, deskewed_image)
+if __name__ == "__main__":
+    main()
