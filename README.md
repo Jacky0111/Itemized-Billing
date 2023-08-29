@@ -6,21 +6,41 @@ This repository contains the codebase for a hospital bill detection project. The
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
 [![Python Version](https://img.shields.io/badge/python-3.10-green)](https://www.python.org/downloads/)
 
+## Table of Contents
 
-## Technologies Used
+1. [Introduction](#1-introduction)
+2. [Installation](#2-installation)
+3. [Project Structure](#3-project-structure)
+4. [Usage](#4-usage)
+5. [Contributing](#5-contribution)
+6. [License](#6-license)
+7. [Acknowledgments](#7-acknowledgments)
 
 
-## License
+## 1 Introduction
 
-This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute this software as per the terms of the license.
 
-## Getting Started
 
-To get started with this project, follow the instructions in the [Installation](#installation) section below. You can also refer to the [Documentation](#documentation) for detailed information on how to use and extend this codebase.
+## 2 Installation
 
-## Installation
 
-1. Clone this repository to your local machine.
 
-   ```bash
-   git clone https://github.com/yourusername/your-repo-name.git
+## 3 Project Structure
+
+
+
+## 4 Usage
+
+
+
+## 5 Contribution
+
+
+
+## 6 License
+
+This project is licensed under the [MIT License](LICENSE). 
+
+
+## 7 Acknowledgments
+
