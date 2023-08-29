@@ -1,16 +1,14 @@
 # Itemized Billing
 
-This repository contains the codebase for a hospital bill detection project. The primary objective of this project is to develop a system that can automatically extract and process itemized billing information from hospital bills. This can be immensely useful in healthcare administration and cost analysis, making the billing process more efficient and transparent.
+This repository contains the codebase for a hospital bill detection project. The primary objective of this project is to develop a system that can automatically extract and process itemized billing information from hospital bills. This can be immensely useful in healthcare administration and cost analysis, making the billing process more efficient and transparent. The project is mainly developed using Python, with a focus on incorporating the PyTorch library for machine learning and computer vision tasks. Python 3.10 is the minimum required version for running this codebase.
 
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
-![Python Version](https://img.shields.io/badge/Python-3.10-brightgreen.svg)
 
-## Overview
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit/)
+[![Python Version](https://img.shields.io/badge/python-3.10-green)](https://www.python.org/downloads/)
 
 
 ## Technologies Used
 
-The project is mainly developed using Python, with a focus on incorporating the PyTorch library for machine learning and computer vision tasks. Python 3.10 is the minimum required version for running this codebase.
 
 ## License
 
