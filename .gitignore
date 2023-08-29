@@ -3,17 +3,9 @@
 *.yaml
 *.cache
 *.xml
+*.iml
 config.yaml
-.idea/vcs.xml
-.idea/Itemized-Billing.iml
 .ipynb_checkpoints/yolov8-checkpoint.ipynb
 
 
-.idea/Itemized-Billing.iml
-*.iml
-*.iml
-*.xml
-*.iml
-*.xml
-*.iml
-*.xml
+
