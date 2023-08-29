@@ -4,8 +4,4 @@
 *.cache
 *.xml
 *.iml
-config.yaml
 .ipynb_checkpoints/yolov8-checkpoint.ipynb
-
-
-
