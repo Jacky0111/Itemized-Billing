@@ -52,7 +52,7 @@ class DataAugmentation:
     @:param ann_path (str): Path to the annotation file.
     @:return tuple: A tuple containing the following elements:
                 - img (numpy.ndarray): The image read using OpenCV.
-                - bboxes (list): A list of bounding box annotations, where each annotation is a list [cid, xpoint, ypoint, width, height].
+                - bboxes (list): A list of bounding box annotations, where each annotation is a list [cid, x, y, width, height].
     """
 
     @staticmethod
@@ -192,13 +192,13 @@ class DataAugmentation:
 
 if __name__ == "__main__":
     # Define your data directories
-    image_dir = 'HB-yolo-1.1/obj_annotated_data/images'
-    annotation_dir = 'HB-yolo-1.1/obj_annotated_data/annotations'
-    output_dir = 'HB-yolo-1.1/obj_train_data/'
-    train_file = r'HB-yolo-1.1/train.txt'
+    img_dir = 'HB-yolo-1.1/obj_annotated_data/images'
+    ann_dir = 'HB-yolo-1.1/obj_annotated_data/annotations'
+    out_dir = 'HB-yolo-1.1/obj_train_data/'
+    train_text = r'HB-yolo-1.1/train.txt'
 
     # Create an instance of the DataAugmentation class
-    data_augmentor = DataAugmentation(image_dir, annotation_dir, output_dir, train_file)
+    data_augmentor = DataAugmentation(img_dir, ann_dir, out_dir, train_text)
 
     # Call the main method to perform data augmentation
     data_augmentor.runner()
