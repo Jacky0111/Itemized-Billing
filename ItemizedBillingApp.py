@@ -53,8 +53,11 @@ class ItemizedBillingApp:
             # Use the file selection dialog to choose a file(s)
             img_path = self.chooseFile()
 
-            self.output_folder_path = self.setFolderPath(subfolder=f'OCR_Output/{os.path.basename(img_path)}')
+            # Extract the pdf/img name from `img_path`
+            img_name_list = [os.path.splitext(os.path.basename (path))[0] for path in img_path if path.lower()]
+            subfolder = ['OCR_Output/' + name for name in img_name_list]
 
+            self.output_folder_path = self.setFolderPath(subfolder=subfolder)
 
             print('-----------------------------------Converting PDF to image------------------------------------')
             converter = PDFToImageConverter()
@@ -78,21 +81,28 @@ class ItemizedBillingApp:
     '''
     @staticmethod
     def setFolderPath(subfolder, parent=None):
+        folder_path = None
+
         if parent:
             folder_path = os.path.join(parent, subfolder)
+            ItemizedBillingApp.createFolder(folder_path)
         else:
+            for folder in subfolder:
             # folder_path = f"/{subfolder}/{Path(subfolder).stem}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
-            folder_path = f"/{Path(subfolder).relative_to((Path.cwd()))}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
-            print(folder_path)
-            folder_path = os.getcwd() + folder_path
+                folder_path = f"{folder}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
+                print(folder_path)
+                ItemizedBillingApp.createFolder(folder_path)
 
+        return folder_path
+
+    @staticmethod
+    def createFolder(directory):
         try:
-            os.makedirs(folder_path)
-            print(f'{folder_path} has been made')
+            os.makedirs(directory)
+            print(f'{directory} has been made')
         except FileExistsError:
             pass
 
-        return folder_path
 
     '''
     Select any files locally by popping up a window.
