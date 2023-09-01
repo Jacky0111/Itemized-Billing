@@ -49,10 +49,12 @@ class ItemizedBillingApp:
             converter.convertMultiplePdfs(self.dataset_path, self.images_path)
 
         elif choice == 2:
-            self.output_folder_path = self.setFolderPath(subfolder='OCR_Output')
             print('----------------------------------------Choosing File-----------------------------------------')
             # Use the file selection dialog to choose a file(s)
             img_path = self.chooseFile()
+
+            self.output_folder_path = self.setFolderPath(subfolder=f'OCR_Output/{os.path.basename(img_path)}')
+
 
             print('-----------------------------------Converting PDF to image------------------------------------')
             converter = PDFToImageConverter()
@@ -79,11 +81,14 @@ class ItemizedBillingApp:
         if parent:
             folder_path = os.path.join(parent, subfolder)
         else:
-            folder_path = f"/Images/{Path(subfolder).stem}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
+            # folder_path = f"/{subfolder}/{Path(subfolder).stem}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
+            folder_path = f"/{Path(subfolder).relative_to((Path.cwd()))}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
+            print(folder_path)
             folder_path = os.getcwd() + folder_path
 
         try:
             os.makedirs(folder_path)
+            print(f'{folder_path} has been made')
         except FileExistsError:
             pass
 
