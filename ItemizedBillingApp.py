@@ -9,6 +9,7 @@ from datetime import datetime
 
 from PDF_To_Image.Conversion import PDFToImageConverter
 
+
 class ItemizedBillingApp:
     data = []
     images = []  # To store the image converted from chosen invoice
@@ -16,10 +17,10 @@ class ItemizedBillingApp:
     invoice = None  # Chosen invoice
     img_counter = 0
     file_name = None
-    folder_path = None
 
     images_path = None
     dataset_path = None
+    output_folder_path = None
 
     def __init__(self):
         pass
@@ -32,21 +33,31 @@ class ItemizedBillingApp:
 
         if choice == 1:
             print('--------------------------------------Generating Dataset--------------------------------------')
-            self.dataset_path = self.setDatasetPath('pdf')
-            self.images_path = self.setDatasetPath('images')
 
+            self.dataset_path = self.setFolderPath(subfolder='pdf', parent='PDF_To_Image')
+            self.images_path = self.setFolderPath(subfolder='images', parent='PDF_To_Image')
+
+            print('----------------------------------------Choosing File-----------------------------------------')
             # Use the file selection dialog to choose a file(s)
             bill_path = self.chooseFile()
 
             # Remove existing files in pdf folder and copy select files
             self.processSelectedFiles(bill_path)
 
+            print('-----------------------------------Converting PDF to image------------------------------------')
             converter = PDFToImageConverter()
             converter.convertMultiplePdfs(self.dataset_path, self.images_path)
 
-
         elif choice == 2:
+            self.output_folder_path = self.setFolderPath(subfolder='OCR_Output')
             print('----------------------------------------Choosing File-----------------------------------------')
+            # Use the file selection dialog to choose a file(s)
+            img_path = self.chooseFile()
+
+            print('-----------------------------------Converting PDF to image------------------------------------')
+            converter = PDFToImageConverter()
+            converter.convertMultiplePdfs(self.dataset_path, self.images_path)
+
 
     '''
     A main menu that allows user to choose either create a dataset or run ocr.
@@ -64,8 +75,13 @@ class ItemizedBillingApp:
     Set the PDF and images folder path name
     '''
     @staticmethod
-    def setDatasetPath(subfolder):
-        folder_path = os.path.join(r'PDF_To_Image/', subfolder)
+    def setFolderPath(subfolder, parent=None):
+        if parent:
+            folder_path = os.path.join(parent, subfolder)
+        else:
+            folder_path = f"/Images/{Path(subfolder).stem}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
+            folder_path = os.getcwd() + folder_path
+
         try:
             os.makedirs(folder_path)
         except FileExistsError:
@@ -77,7 +93,8 @@ class ItemizedBillingApp:
     Select any files locally by popping up a window.
     @return path
     '''
-    def chooseFile(self):
+    @staticmethod
+    def chooseFile():
         app = wx.App(None)
         style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE | wx.DD_DIR_MUST_EXIST
         dialog = wx.FileDialog(None, 'Open', style=style)
