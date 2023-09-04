@@ -7,6 +7,7 @@ deskew~=1.4.3
 PyYAML~=6.0.1
 pytest~=7.4.0
 Pillow~=10.0.0
+ipython~=8.14.0
 wxPython~=4.2.1
 requests~=2.31.0
 pdf2image~=1.16.3
@@ -16,6 +17,7 @@ scikit-image~=0.21.0
 ultralytics~=8.0.166
 opencv-python~=4.8.0.76
 
-torch~=1.13.1+cu116
+torch~=2.0.1
 torch-utils~=0.1.2
-torchvision~=0.14.1+cu116
+torchvision~=0.15.2
+
