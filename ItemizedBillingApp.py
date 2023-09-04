@@ -2,11 +2,11 @@ import os
 import re
 import wx
 import shutil
-import numpy as np
 
 from pathlib import Path
 from datetime import datetime
 
+from Detect import Detect
 from PDF_To_Image.Conversion import PDFToImageConverter
 
 
@@ -20,7 +20,7 @@ class ItemizedBillingApp:
 
     images_path = None
     dataset_path = None
-    output_folder_path = None
+    output_folder_path = []
 
     def __init__(self):
         pass
@@ -54,14 +54,24 @@ class ItemizedBillingApp:
             img_path = self.chooseFile()
 
             # Extract the pdf/img name from `img_path`
-            img_name_list = [os.path.splitext(os.path.basename (path))[0] for path in img_path if path.lower()]
+            img_name_list = [os.path.splitext(os.path.basename(path))[0] for path in img_path if path.lower()]
             subfolder = ['OCR_Output/' + name for name in img_name_list]
 
             self.output_folder_path = self.setFolderPath(subfolder=subfolder)
+            print(self.output_folder_path)
 
-            print('-----------------------------------Converting PDF to image------------------------------------')
-            converter = PDFToImageConverter()
-            converter.convertMultiplePdfs(self.dataset_path, self.images_path)
+            # print('-----------------------------------Converting PDF to image------------------------------------')
+            # converter = PDFToImageConverter()
+            # converter.convertMultiplePdfs(self.dataset_path, self.images_path)
+
+            print('---------------------------------------Detecting Table----------------------------------------')
+            for path in self.output_folder_path:
+                table = Detect.parseOpt(path)
+
+
+            # print('-----------------------------------------Applying OCR-----------------------------------------')
+
+
 
 
     '''
@@ -81,17 +91,15 @@ class ItemizedBillingApp:
     '''
     @staticmethod
     def setFolderPath(subfolder, parent=None):
-        folder_path = None
-
         if parent:
             folder_path = os.path.join(parent, subfolder)
             ItemizedBillingApp.createFolder(folder_path)
         else:
+            folder_path = []
             for folder in subfolder:
-            # folder_path = f"/{subfolder}/{Path(subfolder).stem}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
-                folder_path = f"{folder}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
-                print(folder_path)
-                ItemizedBillingApp.createFolder(folder_path)
+                path = f"{folder}_{str(datetime.now().strftime('%Y_%m_%d_%H_%M_%S'))}"
+                folder_path.append(path)
+                ItemizedBillingApp.createFolder(path)
 
         return folder_path
 
@@ -102,7 +110,6 @@ class ItemizedBillingApp:
             print(f'{directory} has been made')
         except FileExistsError:
             pass
-
 
     '''
     Select any files locally by popping up a window.
