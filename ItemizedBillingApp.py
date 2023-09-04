@@ -58,7 +58,9 @@ class ItemizedBillingApp:
             subfolder = ['OCR_Output/' + name for name in img_name_list]
 
             self.output_folder_path = self.setFolderPath(subfolder=subfolder)
-            print(self.output_folder_path)
+
+            for ip, fp in zip(img_path, self.output_folder_path):
+                shutil.copy(ip, fp)
 
             # print('-----------------------------------Converting PDF to image------------------------------------')
             # converter = PDFToImageConverter()
