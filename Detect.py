@@ -45,17 +45,19 @@ class Detect:
         half = device.type != 'cpu'  # half precision only supported on CUDA
 
         # Load model
-        device = select_device(opt.device)
-
         model = YOLO(weights)
-        model.predict(source=source, weights=weights, view_img=view_img, save_txt=save_txt, imgsz=imgsz, half=half)
+        model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, save=True)
+
+        img_saved_paths = []
+
+
+        return img_saved_paths
 
     '''
     Define the required arguments to command-line interfaces.
     @param saved_path
     @return img_saved_paths
     '''
-
     @staticmethod
     def parseOpt(saved_path):
         parser = argparse.ArgumentParser()
