@@ -6,7 +6,7 @@ from skimage.transform import rotate
 from deskew import determine_skew
 
 
-class Deskew:
+class DataAugmentation:
     def __init__(self, directory):
         self.directory = directory
 
@@ -18,14 +18,14 @@ class Deskew:
         for index, img in enumerate(images):
             image_path = os.path.join(self.directory, img)
             print(f'{str(index + 1)}. {image_path}')
-            self.deskewer(image_path)
+            self.deskew(image_path)
 
     """
     Deskews an image and saves it back to the input path.
     @:param input_path (str)
     """
     @staticmethod
-    def deskewer(input_path):
+    def deskew(input_path):
         # Load the image
         image = io.imread(input_path)
 
@@ -46,5 +46,5 @@ class Deskew:
 if __name__ == "__main__":
     # Input directory can be provided as a command-line argument or hardcoded here
     input_directory = r'CVAT/Training Set'
-    deskewer = Deskew(input_directory)
+    deskewer = DataAugmentation(input_directory)
     deskewer.processor()
