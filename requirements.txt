@@ -14,10 +14,11 @@ pdf2image~=1.16.3
 matplotlib~=3.7.2
 setuptools==68.1.2
 scikit-image~=0.21.0
-ultralytics==8.0.170
+ultralytics==8.0.171
 opencv-python~=4.8.0.76
 
-torch~=2.0.1
+torch~=1.13.1+cu116
 torch-utils~=0.1.2
-torchvision~=0.15.2
+torchaudio~=0.14.1+cu116
+torchvision~=0.14.1+cu116
 
