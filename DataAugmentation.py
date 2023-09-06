@@ -18,14 +18,14 @@ class DataAugmentation:
         for index, img in enumerate(images):
             image_path = os.path.join(self.directory, img)
             print(f'{str(index + 1)}. {image_path}')
-            self.deskew(image_path)
+            self.Deskew(image_path)
 
     """
     Deskews an image and saves it back to the input path.
     @:param input_path (str)
     """
     @staticmethod
-    def deskew(input_path):
+    def Deskew(input_path):
         # Load the image
         image = io.imread(input_path)
 
