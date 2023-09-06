@@ -20,19 +20,17 @@ from ultralytics.utils.checks import check_imgsz, check_requirements, check_imsh
 
 class Detect:
     """
-        Execute trained weights to detect header and content as well as annotate the Regions of Interest (ROI) of the
-        image.
-        @param opt
-        @param save_img
-        @return img_saved_paths
+    Execute trained weights to detect header and content as well as annotate the Regions of Interest (ROI) of the
+    image.
+    @param opt
+    @param save_img
+    @return img_saved_paths
     """
     @staticmethod
-    def detect(opt, save_img=False):
+    def detect(opt):
         source, weights, view_img, save_txt, imgsz = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size
-
-        is_file = Path(source).suffix[1:] in (IMG_FORMATS + VID_FORMATS)
-        is_url = source.lower().startswith(('rtsp://', 'rtmp://', 'http://', 'https://'))
-        webcam = source.isnumeric() or source.endswith('.streams') or (is_url and not is_file)
+        # Directory variables
+        project, name, img_name = opt.project, opt.name, opt.img_name
 
         # Directories
         save_dir = Path(opt.project) / opt.name  # increment run
@@ -45,7 +43,34 @@ class Detect:
 
         # Load model
         model = YOLO(weights)
-        model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, save=True)
+        results = model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, save=True)
+
+        # Set Dataloader
+        dataset = LoadImages(source, imgsz=imgsz)
+
+        # Get names and colors
+        names = model.module.names if hasattr(model, 'module') else model.names
+        color = [[random.randint(0, 255) for _ in range(3)] for _ in names]
+
+        for data in dataset:
+            for d in data:
+                print(d)
+
+
+        annotated_img_name = f'{save_dir}/{img_name}_annotated.png'
+        crop_img_name = f'{save_dir}/{img_name}_crop.png'
+
+
+        # Process results generator
+        for result in results:
+            boxes = result.boxes  # Boxes object for bbox outputs
+
+        #     print(boxes.conf.tolist())
+        #     # print(f'keypoints: {keypoints}')
+        #     # print()
+        #     # print(f'probs: {probs}')
+        #     # print()
+
 
         img_saved_paths = []
 
@@ -57,10 +82,11 @@ class Detect:
     @return img_saved_paths
     '''
     @staticmethod
-    def parseOpt(saved_path):
+    def parseOpt(saved_path, image_name):
         parser = argparse.ArgumentParser()
 
         print(f'Saved path: {saved_path}')
+        print(f'Image name: {image_name}')
 
         parser.add_argument('--weights', nargs='+', type=str, default='best.pt', help='model.pt path(s)')
         parser.add_argument('--source', type=str, default=saved_path, help='source')  # file/folder, 0 for webcam
@@ -77,6 +103,7 @@ class Detect:
         parser.add_argument('--update', action='store_true', help='update all models')
         parser.add_argument('--project', default=os.path.split(saved_path)[0], help='save results to project/name')
         parser.add_argument('--name', default=os.path.split(saved_path)[1], help='save results to project/name')
+        parser.add_argument('--img-name', default=image_name, help='image name in project/name')
         parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
         opt = parser.parse_args()
         print(opt)
