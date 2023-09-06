@@ -59,16 +59,17 @@ class ItemizedBillingApp:
 
             self.output_folder_path = self.setFolderPath(subfolder=subfolder)
 
-            for ip, fp in zip(img_path, self.output_folder_path):
-                shutil.copy(ip, fp)
+            # Copy the image from the source path to the destination path
+            for source_path, dest_path in zip(img_path, self.output_folder_path):
+                shutil.copy(source_path, dest_path)
 
             # print('-----------------------------------Converting PDF to image------------------------------------')
             # converter = PDFToImageConverter()
             # converter.convertMultiplePdfs(self.dataset_path, self.images_path)
 
             print('---------------------------------------Detecting Table----------------------------------------')
-            for path in self.output_folder_path:
-                table = Detect.parseOpt(path)
+            for output_folder, img in zip(self.output_folder_path, img_name_list):
+                table = Detect.parseOpt(output_folder, img)
 
 
             # print('-----------------------------------------Applying OCR-----------------------------------------')
