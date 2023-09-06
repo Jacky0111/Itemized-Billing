@@ -7,18 +7,19 @@ deskew~=1.4.3
 PyYAML~=6.0.1
 pytest==7.4.1
 Pillow~=10.0.0
-ipython==8.15.0
+ipython~=8.15.0
 wxPython~=4.2.1
 requests~=2.31.0
 pdf2image~=1.16.3
 matplotlib~=3.7.2
-setuptools==68.1.2
+setuptools~=68.1.2
 scikit-image~=0.21.0
-ultralytics==8.0.171
+ultralytics~=8.0.165
 opencv-python~=4.8.0.76
 
 torch~=1.13.1+cu116
 torch-utils~=0.1.2
-torchaudio~=0.14.1+cu116
+torchaudio~=0.13.1+cu116
 torchvision~=0.14.1+cu116
 
+# pip install torch==1.13.1 torchvision===0.14.1+cu116 torchaudio===0.13.1+cu116 --index-url https://download.pytorch.org/whl/cu116
