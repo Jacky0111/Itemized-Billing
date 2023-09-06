@@ -26,7 +26,6 @@ class Detect:
         @param save_img
         @return img_saved_paths
     """
-
     @staticmethod
     def detect(opt, save_img=False):
         source, weights, view_img, save_txt, imgsz = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size
@@ -49,7 +48,6 @@ class Detect:
         model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, save=True)
 
         img_saved_paths = []
-
 
         return img_saved_paths
 
@@ -83,12 +81,4 @@ class Detect:
         opt = parser.parse_args()
         print(opt)
 
-        with torch.no_grad():
-            if opt.update:  # update all models (to fix SourceChangeWarning)
-                for opt.weights in ['yolov5s.pt', 'yolov5m.pt', 'yolov5l.pt', 'yolov5x.pt']:
-                    img_saved_paths = Detect.detect(opt)
-                    strip_optimizer(opt.weights)
-            else:
-                img_saved_paths = Detect.detect(opt)
-
-        return img_saved_paths
+        return Detect.detect(opt)
