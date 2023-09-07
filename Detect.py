@@ -2,6 +2,8 @@ import os
 import cv2
 import time
 import argparse
+
+import numpy as np
 from numpy import random
 from pathlib import Path
 
@@ -49,13 +51,16 @@ class Detect:
         dataset = LoadImages(source, imgsz=imgsz)
 
         # Get names and colors
-        names = model.module.names if hasattr(model, 'module') else model.names
-        color = [[random.randint(0, 255) for _ in range(3)] for _ in names]
+        target_name = model.module.names if hasattr(model, 'module') else model.names
+        color = [[random.randint(0, 255) for _ in range(3)] for _ in target_name]
 
-        for data in dataset:
-            for d in data:
-                print(d)
+        # for data in dataset:
+        #     iii = np.array(data[1])
+        #     cv2.imshow('img', iii)
+        #     cv2.waitKey(0)
 
+            # for d in data:
+            #     print(d)
 
         annotated_img_name = f'{save_dir}/{img_name}_annotated.png'
         crop_img_name = f'{save_dir}/{img_name}_crop.png'
@@ -63,8 +68,8 @@ class Detect:
 
         # Process results generator
         for result in results:
-            boxes = result.boxes  # Boxes object for bbox outputs
-
+            boxes = result.boxes.data  # Boxes object for bbox outputs
+            print(boxes)
         #     print(boxes.conf.tolist())
         #     # print(f'keypoints: {keypoints}')
         #     # print()
@@ -91,8 +96,8 @@ class Detect:
         parser.add_argument('--weights', nargs='+', type=str, default='best.pt', help='model.pt path(s)')
         parser.add_argument('--source', type=str, default=saved_path, help='source')  # file/folder, 0 for webcam
         parser.add_argument('--img-size', type=int, default=416, help='inference size (pixels)')
-        parser.add_argument('--conf-thres', type=float, default=0.25, help='object confidence threshold')
-        parser.add_argument('--iou-thres', type=float, default=0.45, help='IOU threshold for NMS')
+        parser.add_argument('--conf-thres', type=float, default=0.8, help='object confidence threshold')
+        parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
         parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
         parser.add_argument('--view-img', action='store_true', help='display results')
         parser.add_argument('--save-txt', action='store_true', help='save results to *.txt')
