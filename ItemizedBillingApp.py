@@ -69,8 +69,7 @@ class ItemizedBillingApp:
 
             print('---------------------------------------Detecting Table----------------------------------------')
             for output_folder, img in zip(self.output_folder_path, img_name_list):
-                table = Detect.parseOpt(output_folder, img)
-
+                Detect.parseOpt(output_folder, img)
 
             # print('-----------------------------------------Applying OCR-----------------------------------------')
 
