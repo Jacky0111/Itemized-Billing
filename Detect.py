@@ -30,9 +30,9 @@ class Detect:
     """
     @staticmethod
     def detect(opt):
-        source, weights, view_img, save_txt, imgsz = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size
+        source, weights, save_txt, imgsz = opt.source, opt.weights, opt.save_txt, opt.img_size
         # Directory variables
-        project, name, img_name = opt.project, opt.name, opt.img_name
+        project, name, img_name, ext = opt.project, opt.name, opt.img_name, opt.ext
 
         # Directories
         save_dir = Path(opt.project) / opt.name  # increment run
@@ -45,37 +45,68 @@ class Detect:
 
         # Load model
         model = YOLO(weights)
-        results = model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, save=True)
-
-        # Set Dataloader
-        dataset = LoadImages(source, imgsz=imgsz)
+        results = model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, conf=opt.conf_thres, save=True)
 
         # Get names and colors
         target_name = model.module.names if hasattr(model, 'module') else model.names
         color = [[random.randint(0, 255) for _ in range(3)] for _ in target_name]
 
-        # for data in dataset:
-        #     iii = np.array(data[1])
-        #     cv2.imshow('img', iii)
-        #     cv2.waitKey(0)
+        ori_img = cv2.imread(f'{save_dir}/{img_name}.{ext}')
+        gn = torch.tensor(ori_img.shape)[[1, 0, 1, 0]]  # normalization gain whwh
 
-            # for d in data:
-            #     print(d)
+        for count, result in enumerate(results):
+            print(f'xywh : {result.boxes.xywh}')
 
-        annotated_img_name = f'{save_dir}/{img_name}_annotated.png'
-        crop_img_name = f'{save_dir}/{img_name}_crop.png'
+            xyxy = result.boxes.xyxy.to(device)
+            gn = gn.to(device)
+            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+            line = (result.boxes.cls, *xywh, result.boxes.conf) if opt.save_conf else (result.boxes.cls, xywh)  # label format
+            print(f'xywh : {xywh}')
+            print(f'line : {line}')
+
+            with open(f'{save_dir}/line.txt', 'a') as f:
+                # Write the first element of the tuple (tensor) as a float
+                f.write('%g ' % line[0].item())  # Extract the float value from the tensor and write it
+
+                # Write the second element of the tuple (list) as a series of floats
+                for number in line[1]:
+                    f.write('%g ' % number)  # Write each number followed by a space
+
+                f.write('\n')  # Add a newline character at the end of the line
+
+            annotated_img_name = f'{save_dir}/{img_name}_annotated.png'
+            crop_img_name = f'{save_dir}/{img_name}_crop.png'
+            label = f'{target_name[int(result.boxes.cls)]} {float(result.boxes.conf):.2f}'
+            # plot_one_box(xyxy, ori_img, label=label, color=colors[int(result.boxes.cls)], line_thickness=3)
+
+            save_one_box(xyxy, ori_img, file=Path(crop_img_name))
+
+            print(f'xyxy[0]: {xyxy[0]}')
+            print(f'xyxy[1]: {xyxy[1]}')
+
+            x1 = int(xyxy.tolist()[0])
+            y1 = int(xyxy.tolist()[1])
+            x2 = int(xyxy.tolist()[2])
+            y2 = int(xyxy.tolist()[3])
+
+            annotated_img = cv2.rectangle(ori_img, (x1, y1), (x2, y2), color=color, thickness=2)
+            annotated_img = cv2.putText(annotated_img, label, (x1, y1), color=color, thickness=2)
+            cv2.imwrite(annotated_img_name, annotated_img)
+
+            # print(f'keypoints: {keypoints}')
+            # print()
+            # print(f'probs: {probs}')
+            # print()
 
 
-        # Process results generator
-        for result in results:
-            boxes = result.boxes.data  # Boxes object for bbox outputs
-            print(boxes)
-        #     print(boxes.conf.tolist())
-        #     # print(f'keypoints: {keypoints}')
-        #     # print()
-        #     # print(f'probs: {probs}')
-        #     # print()
+        # # Set Dataloader
+        # dataset = LoadImages(source, imgsz=imgsz)
+        #
 
+        #
+
+        #
+        # # Process results generator
 
         img_saved_paths = []
 
@@ -109,6 +140,7 @@ class Detect:
         parser.add_argument('--project', default=os.path.split(saved_path)[0], help='save results to project/name')
         parser.add_argument('--name', default=os.path.split(saved_path)[1], help='save results to project/name')
         parser.add_argument('--img-name', default=image_name, help='image name in project/name')
+        parser.add_argument('--ext', default='png', help='default image extension is *.png')
         parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
         opt = parser.parse_args()
         print(opt)
