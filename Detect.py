@@ -18,7 +18,6 @@ class Detect:
     @param opt
     @return img_saved_paths
     """
-
     @staticmethod
     def detect(opt):
         source = opt.source
@@ -82,16 +81,15 @@ class Detect:
         label = f'{target_name[int(cls)]} {float(conf):.2f}'  # Text to display beside of the box
         xyxy = np.array(xyxy.tolist()).ravel()  # Flatten the numpy array
         annotator = Annotator(ori_img)
-        annotator.box_label(xyxy, label, color=(0, 0, 255))
+        annotator.box_label(xyxy, label, (0, 0, 255))
         annotated_img = annotator.result()
         cv2.imwrite(annotated_img_name, annotated_img)
 
     '''
     Define the required arguments to command-line interfaces.
     @param saved_path
-    @return img_saved_paths
+    @param image_name
     '''
-
     @staticmethod
     def parseOpt(saved_path, image_name):
         parser = argparse.ArgumentParser()
