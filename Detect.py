@@ -81,8 +81,8 @@ class Detect:
         label = f'{target_name[int(cls)]} {float(conf):.2f}'  # Text to display beside of the box
         xyxy = np.array(xyxy.tolist()).ravel()  # Flatten the numpy array
         annotator = Annotator(ori_img)
-        annotator.box_label(xyxy, label, (0, 0, 255))
-        annotated_img = annotator.result()
+        annotator.box_label(xyxy, label, (0, 0, 255))  # Add one xyxy box to image with label
+        annotated_img = annotator.result()  # Return annotated image as array
         cv2.imwrite(annotated_img_name, annotated_img)
 
     '''
