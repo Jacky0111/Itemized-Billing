@@ -7,6 +7,8 @@ from deskew import determine_skew
 
 
 class DataAugmentation:
+    directory = None
+
     def __init__(self, directory):
         self.directory = directory
 
