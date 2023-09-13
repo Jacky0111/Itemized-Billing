@@ -47,22 +47,6 @@ class ItemizedBillingApp:
             converter.pdfToImages(self.dataset_path, self.images_path)
 
         elif choice == 2:
-            print('--------------------------------------Generating Dataset--------------------------------------')
-            self.text_path = self.setFolderPath(subfolder='text', parent='Conversion')
-            self.xml_path = self.setFolderPath(subfolder='xml', parent='Conversion')
-
-            print('----------------------------------------Choosing File-----------------------------------------')
-            # Use the file selection dialog to choose a file(s)
-            bill_path = self.chooseFile(allow_images=True)
-
-            # Remove existing files in pdf folder and copy select files
-            self.processSelectedFiles(bill_path, self.xml_path)
-
-            print('------------------------------------Converting TXT to XML-------------------------------------')
-            # converter = Converter()
-            # converter.pdfToImages(self.dataset_path, self.images_path)
-
-        elif choice == 3:
             print('----------------------------------------Choosing File-----------------------------------------')
             # Use the file selection dialog to choose a file(s)
             img_path = self.chooseFile()
@@ -96,8 +80,7 @@ class ItemizedBillingApp:
         print('MAIN MENU')
         print('=========')
         print('1. Create Dataset')
-        print('2. Create XML file(s)')
-        print('3. Run OCR')
+        print('2. Run OCR')
         return int(input('Enter your choice: '))
 
     '''
