@@ -1,8 +1,6 @@
 import os
-import re
 import wx
 import shutil
-from pathlib import Path
 from datetime import datetime
 
 from Detect import Detect
@@ -10,14 +8,12 @@ from Conversion.Conversion import Converter
 
 
 class ItemizedBillingApp:
-    xml_path = None
     text_path = None
     images_path = None
     dataset_path = None
     output_folder_path = []
 
     def __init__(self):
-        self.xml_path = None
         self.text_path = None
         self.images_path = None
         self.dataset_path = None
