@@ -134,11 +134,11 @@ class ItemizedBillingApp:
         for existing_file in os.listdir(destination):
             file_path = os.path.join(destination, existing_file)
             if os.path.isfile(file_path):
-                os.remove(file_path)
+                os.remove(file_path)  # Remove the existing file
 
         # Copy the selected files to the destination folder
         for path in files:
-            shutil.copy(path, destination)
+            shutil.copy(path, destination)  # Copy the file to the destination folder
 
 
 if __name__ == "__main__":
