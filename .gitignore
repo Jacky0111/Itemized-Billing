@@ -5,5 +5,8 @@
 *.xml
 *.iml
 .ipynb_checkpoints/yolov8-checkpoint.ipynb
+Crop_Images
 TCD-yolo-1.1
 CVAT/KPJ
+OCR_Output
+runs
