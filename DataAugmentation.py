@@ -47,6 +47,6 @@ class DataAugmentation:
 
 if __name__ == "__main__":
     # Input directory can be provided as a command-line argument or hardcoded here
-    input_directory = r'CVAT/Training Set'
+    input_directory = r'CVAT/KPJ'
     deskewer = DataAugmentation(input_directory)
     deskewer.processor()
