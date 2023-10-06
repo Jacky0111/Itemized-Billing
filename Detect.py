@@ -57,33 +57,35 @@ class Detect:
         conf = result.boxes.conf
 
         xyxy = result.boxes.xyxy.to(device)  # Convert detected bounding boxes to the chosen device
-        gn = gn.to(device)  # Move the normalization gain tensor to the chosen device
-        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-        line = (cls, *xywh, conf) if opt.save_conf else (cls, xywh)  # label format
 
-        if save_txt:
-            with open(f'{save_dir}/bounding_box.txt', 'a') as f:
-                # Write the first element of the tuple (tensor) as a float
-                f.write('%g ' % line[0].item())  # Extract the float value from the tensor and write it
+        if xyxy.numel() > 0:  # Check if the tensor is not empty
+            gn = gn.to(device)  # Move the normalization gain tensor to the chosen device
+            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+            line = (cls, *xywh, conf) if opt.save_conf else (cls, xywh)  # label format
 
-                # Write the second element of the tuple (list) as a series of floats
-                for number in line[1]:
-                    f.write('%g ' % number)  # Write each number followed by a space
+            if save_txt:
+                with open(f'{save_dir}/bounding_box.txt', 'a') as f:
+                    # Write the first element of the tuple (tensor) as a float
+                    f.write('%g ' % line[0].item())  # Extract the float value from the tensor and write it
 
-                f.write('\n')  # Add a newline character at the end of the line
+                    # Write the second element of the tuple (list) as a series of floats
+                    for number in line[1]:
+                        f.write('%g ' % number)  # Write each number followed by a space
 
-        # Save cropped image
-        crop_img_name = f'{save_dir}/{img_name}_crop.png'
-        save_one_box(xyxy, ori_img, file=Path(crop_img_name))
+                    f.write('\n')  # Add a newline character at the end of the line
 
-        # Save annotated image
-        annotated_img_name = f'{save_dir}/{img_name}_annotated.png'
-        label = f'{target_name[int(cls)]} {float(conf):.2f}'  # Text to display beside of the box
-        xyxy = np.array(xyxy.tolist()).ravel()  # Flatten the numpy array
-        annotator = Annotator(ori_img)
-        annotator.box_label(xyxy, label, (0, 0, 255))  # Add one xyxy box to image with label
-        annotated_img = annotator.result()  # Return annotated image as array
-        cv2.imwrite(annotated_img_name, annotated_img)
+            # Save cropped image
+            crop_img_name = f'{save_dir}/{img_name}_crop.png'
+            save_one_box(xyxy, ori_img, file=Path(crop_img_name))
+
+            # Save annotated image
+            annotated_img_name = f'{save_dir}/{img_name}_annotated.png'
+            label = f'{target_name[int(cls)]} {float(conf):.2f}'  # Text to display beside of the box
+            xyxy = np.array(xyxy.tolist()).ravel()  # Flatten the numpy array
+            annotator = Annotator(ori_img)
+            annotator.box_label(xyxy, label, (0, 0, 255))  # Add one xyxy box to image with label
+            annotated_img = annotator.result()  # Return annotated image as array
+            cv2.imwrite(annotated_img_name, annotated_img)
 
     '''
     Define the required arguments to command-line interfaces.
