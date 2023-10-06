@@ -2,9 +2,9 @@ import os
 
 
 class Rename:
-    def __init__(self, folder_path, new_prefix='KPJ_'):
+    def __init__(self, folder_path, prefix='KPJ_'):
         self.folder_path = folder_path
-        self.new_prefix = new_prefix
+        self.prefix = prefix
 
     def scenario1(self):
         # Iterate over the files in the folder
@@ -12,7 +12,7 @@ class Rename:
             # Check if the file is a .png file (you can change the extension if needed)
             if filename.endswith('.png'):
                 # Generate the new filename
-                new_filename = f'{self.new_prefix}{i + 101}.png'
+                new_filename = f'{self.prefix}{i + 101}.png'
 
                 # Create the full paths for the old and new filenames
                 old_path = os.path.join(self.folder_path, filename)
