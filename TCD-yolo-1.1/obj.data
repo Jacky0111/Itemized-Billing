@@ -1,5 +1,4 @@
-classes = 1
+classes = 2
 train = TCD-yolo-1.1/train.txt
-val = TCD-yolo-1.1/valid.txt
 names = TCD-yolo-1.1/obj.names
 backup = backup/
