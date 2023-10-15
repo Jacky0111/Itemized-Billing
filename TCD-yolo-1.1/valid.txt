@@ -1,0 +1,9 @@
+TCD-yolo-1.1/obj_train_data/KPJ_051.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_052.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_053.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_054.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_055.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_056.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_057.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_058.jpg
+TCD-yolo-1.1/obj_train_data/KPJ_059.jpg
