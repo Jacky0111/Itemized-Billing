@@ -2,7 +2,7 @@ import os
 
 
 class Rename:
-    def __init__(self, folder_path, prefix='KPJ_'):
+    def __init__(self, folder_path, prefix=None):
         self.folder_path = folder_path
         self.prefix = prefix
 
@@ -41,11 +41,18 @@ class Rename:
 
 
 if __name__ == "__main__":
-    # folder_path = r'C:\Users\ChiaChungLim\PycharmProjects\Itemized-Billing\CVAT\KPJ'
-    folder_path = r'C:\Users\CP1\Documents\GitHub\Itemized-Billing\Crop_Images'
+    folder_path = r'C:\Users\ChiaChungLim\PycharmProjects\Itemized-Billing\CVAT\KPJ'
     new_prefix = 'KPJ_'
 
     renamer = Rename(folder_path, new_prefix)
+
+    # To execute scenario1:
+    renamer.scenario1()
+
+if __name__ == "__main__":
+    folder_path = r'C:\Users\ChiaChungLim\PycharmProjects\Itemized-Billing\Crop_Images'
+
+    renamer = Rename(folder_path)
 
     # To execute scenario1:
     # renamer.scenario1()
