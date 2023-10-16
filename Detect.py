@@ -8,6 +8,7 @@ from pathlib import Path
 from ultralytics import YOLO
 from ultralytics.utils import set_logging
 from ultralytics.utils.ops import xyxy2xywh
+from ultralytics.utils.files import increment_path
 from ultralytics.utils.torch_utils import select_device
 from ultralytics.utils.plotting import Annotator, save_one_box
 
@@ -60,32 +61,56 @@ class Detect:
 
         if xyxy.numel() > 0:  # Check if the tensor is not empty
             gn = gn.to(device)  # Move the normalization gain tensor to the chosen device
-            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-            line = (cls, *xywh, conf) if opt.save_conf else (cls, xywh)  # label format
+            xywh = (xyxy2xywh(torch.tensor(xyxy).view(-1, 4)) / gn).view(-1).tolist()  # normalized xywh
+            lines = (cls, *xywh, conf) if opt.save_conf else (cls, xywh)  # label format
 
+            tensor_values = lines[0]
+            list_values = lines[1]
             if save_txt:
-                with open(f'{save_dir}/bounding_box.txt', 'a') as f:
-                    # Write the first element of the tuple (tensor) as a float
-                    f.write('%g ' % line[0].item())  # Extract the float value from the tensor and write it
+                try:
+                    with open(f'{save_dir}/table_box.txt', 'a') as f:
+                        # Write the first element of the tuple (tensor) as a float
+                        f.write('%g ' % tensor_values.item())  # Extract the float value from the tensor and write it
 
-                    # Write the second element of the tuple (list) as a series of floats
-                    for number in line[1]:
-                        f.write('%g ' % number)  # Write each number followed by a space
+                        # Write the second element of the tuple (list) as a series of floats
+                        for number in list_values:
+                            f.write('%g ' % number)  # Write each number followed by a space
 
-                    f.write('\n')  # Add a newline character at the end of the line
+                        f.write('\n')  # Add a newline character at the end of the line
+                except ValueError:
+                    with open(f'{save_dir}/row_boxes.txt', 'a') as f:
+                        # Loop through the values
+                        for i in range(len(list_values) // 4):
+                            start = i * 4
+                            end = start + 4
+                            f.write(f"{tensor_values[i]} {' '.join(map(str, list_values[start:end]))}\n")
 
-            # Save cropped image
-            crop_img_name = f'{save_dir}/{img_name}_crop.png'
-            save_one_box(xyxy, ori_img, file=Path(crop_img_name))
+            # Check if the tensor has only one row
+            if xyxy.dim() == 2 and xyxy.size(0) == 1:
+                # Save cropped image
+                crop_img_name = f'{save_dir}/{img_name}_crop.png'  # File path for the cropped image
+                xyxy_list = xyxy.cpu().numpy().flatten()
+                x1, y1, x2, y2 = xyxy_list  # Assuming the tensor represents two points (x1, y1) and (x2, y2) of the bounding box
 
-            # Save annotated image
-            annotated_img_name = f'{save_dir}/{img_name}_annotated.png'
-            label = f'{target_name[int(cls)]} {float(conf):.2f}'  # Text to display beside of the box
-            xyxy = np.array(xyxy.tolist()).ravel()  # Flatten the numpy array
-            annotator = Annotator(ori_img)
-            annotator.box_label(xyxy, label, (0, 0, 255))  # Add one xyxy box to image with label
-            annotated_img = annotator.result()  # Return annotated image as array
-            cv2.imwrite(annotated_img_name, annotated_img)
+                # x1, y1, x2, y2 = map(int, xyxy)  # Extracting the coordinates from xyxy
+                crop_img = ori_img[int(y1):int(y2), int(x1):int(x2)]  # Cropping the image based on the coordinates
+                cv2.imwrite(crop_img_name, crop_img)
+
+            for box in result.boxes:
+                cls = box.cls
+                conf = box.conf
+                det = 'table' if Path(weights).stem.lower() == 'table' else 'row'
+
+                # Save annotated image
+                annotated_img_name = increment_path(f'{save_dir}/{img_name}_{det}_annotated.png')
+
+                label = f'{target_name[int(cls)]} {float(conf):.2f}'  # Text to display beside of the box
+                xyxy = np.array(xyxy.tolist()).ravel()  # Flatten the numpy array
+                print(f'xyxy:{xyxy}')
+                annotator = Annotator(ori_img)
+                annotator.box_label(xyxy, label, (0, 0, 255))  # Add one xyxy box to image with label
+                annotated_img = annotator.result()  # Return annotated image as array
+                cv2.imwrite(annotated_img_name, annotated_img)
 
     '''
     Define the required arguments to command-line interfaces.
@@ -93,16 +118,16 @@ class Detect:
     @param image_name
     '''
     @staticmethod
-    def parseOpt(saved_path, image_name):
+    def parseOpt(saved_path, image_name, best_weight, conf):
         parser = argparse.ArgumentParser()
 
         print(f'Saved path: {saved_path}')
         print(f'Image name: {image_name}')
 
-        parser.add_argument('--weights', nargs='+', type=str, default='best.pt', help='model.pt path(s)')
-        parser.add_argument('--source', type=str, default=saved_path, help='source')  # file/folder, 0 for webcam
+        parser.add_argument('--weights', nargs='+', type=str, default=best_weight, help='model.pt path(s)')
+        parser.add_argument('--source', type=str, default=f'{saved_path}/{image_name}.png', help='source')  # file/folder, 0 for webcam
         parser.add_argument('--img-size', type=int, default=416, help='inference size (pixels)')
-        parser.add_argument('--conf-thres', type=float, default=0.8, help='object confidence threshold')
+        parser.add_argument('--conf-thres', type=float, default=conf, help='object confidence threshold')
         parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
         parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
         parser.add_argument('--view-img', action='store_true', help='display results')
