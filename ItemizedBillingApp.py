@@ -66,12 +66,12 @@ class ItemizedBillingApp:
 
             print('---------------------------------------Detecting Table----------------------------------------')
             for output_folder, img in zip(self.output_folder_path, img_list):
-                Detect.parseOpt(output_folder, img, 'table.pt')
+                Detect.parseOpt(output_folder, img, 'table.pt', 0.8)
 
             print('----------------------------------------Detecting Row-----------------------------------------')
             new_img_list = [name + '_crop' for name in img_list]
             for output_folder, img in zip(self.output_folder_path, new_img_list):
-                Detect.parseOpt(output_folder, img, 'row.pt')
+                Detect.parseOpt(output_folder, img, 'row.pt', 0.4)
 
             # print('-----------------------------------------Applying OCR-----------------------------------------')
 
