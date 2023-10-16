@@ -48,8 +48,8 @@ class ItemizedBillingApp:
             img_path = self.chooseFile()
 
             # Extract the pdf/img name from `img_path`
-            img_name_list = [os.path.splitext(os.path.basename(path))[0] for path in img_path if path.lower()]
-            subfolder = ['OCR_Output/' + name for name in img_name_list]
+            img_list = [os.path.splitext(os.path.basename(path))[0] for path in img_path if path.lower()]
+            subfolder = ['OCR_Output/' + name for name in img_list]
 
             self.output_folder_path = self.setFolderPath(subfolder=subfolder)
 
@@ -61,9 +61,17 @@ class ItemizedBillingApp:
             # converter = PDFToImageConverter()
             # converter.convertMultiplePdfs(self.dataset_path, self.images_path)
 
+            print(f'output_folder: {self.output_folder_path}')
+            print(f'img_name_list: {img_list}')
+
             print('---------------------------------------Detecting Table----------------------------------------')
-            for output_folder, img in zip(self.output_folder_path, img_name_list):
-                Detect.parseOpt(output_folder, img)
+            for output_folder, img in zip(self.output_folder_path, img_list):
+                Detect.parseOpt(output_folder, img, 'table.pt')
+
+            print('----------------------------------------Detecting Row-----------------------------------------')
+            new_img_list = [name + '_crop' for name in img_list]
+            for output_folder, img in zip(self.output_folder_path, new_img_list):
+                Detect.parseOpt(output_folder, img, 'row.pt')
 
             # print('-----------------------------------------Applying OCR-----------------------------------------')
 
