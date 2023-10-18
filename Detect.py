@@ -77,40 +77,39 @@ class Detect:
                             f.write('%g ' % number)  # Write each number followed by a space
 
                         f.write('\n')  # Add a newline character at the end of the line
-                except ValueError:
+                except (ValueError, RuntimeError):
                     with open(f'{save_dir}/row_boxes.txt', 'a') as f:
                         # Loop through the values
                         for i in range(len(list_values) // 4):
                             start = i * 4
                             end = start + 4
-                            f.write(f"{tensor_values[i]} {' '.join(map(str, list_values[start:end]))}\n")
+                            f.write(f"{int(tensor_values[i])} {' '.join(map(lambda x: f'{x:.6f}', list_values[start:end]))}\n")
 
             # Check if the tensor has only one row
             if xyxy.dim() == 2 and xyxy.size(0) == 1:
                 # Save cropped image
                 crop_img_name = f'{save_dir}/{img_name}_crop.png'  # File path for the cropped image
                 xyxy_list = xyxy.cpu().numpy().flatten()
-                x1, y1, x2, y2 = xyxy_list  # Assuming the tensor represents two points (x1, y1) and (x2, y2) of the bounding box
+                # Assuming the tensor represents two points (x1,y1) and (x2,y2) of the bounding box
+                x1, y1, x2, y2 = xyxy_list
 
-                # x1, y1, x2, y2 = map(int, xyxy)  # Extracting the coordinates from xyxy
                 crop_img = ori_img[int(y1):int(y2), int(x1):int(x2)]  # Cropping the image based on the coordinates
                 cv2.imwrite(crop_img_name, crop_img)
 
-            for box in result.boxes:
+            annotated_img = None
+            for box, x2y2 in zip(result.boxes, xyxy):
                 cls = box.cls
                 conf = box.conf
-                det = 'table' if Path(weights).stem.lower() == 'table' else 'row'
-
-                # Save annotated image
-                annotated_img_name = increment_path(f'{save_dir}/{img_name}_{det}_annotated.png')
 
                 label = f'{target_name[int(cls)]} {float(conf):.2f}'  # Text to display beside of the box
-                xyxy = np.array(xyxy.tolist()).ravel()  # Flatten the numpy array
-                print(f'xyxy:{xyxy}')
+                x2y2 = np.array(x2y2.tolist()).ravel()  # Flatten the numpy array
                 annotator = Annotator(ori_img)
-                annotator.box_label(xyxy, label, (0, 0, 255))  # Add one xyxy box to image with label
+                annotator.box_label(x2y2, label, (0, 0, 255))  # Add one xyxy box to image with label
                 annotated_img = annotator.result()  # Return annotated image as array
-                cv2.imwrite(annotated_img_name, annotated_img)
+
+            det = 'table' if Path(weights).stem.lower() == 'table' else 'row'
+            annotated_img_name = f"{save_dir}/{img_name[:-5] if det=='row' else img_name}_{det}.png"
+            cv2.imwrite(annotated_img_name, annotated_img)
 
     '''
     Define the required arguments to command-line interfaces.
