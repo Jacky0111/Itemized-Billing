@@ -43,7 +43,8 @@ class Detect:
 
         # Load model
         model = YOLO(weights)
-        results = model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, conf=opt.conf_thres, save=True)
+        results = model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, save=True,
+                                conf=opt.conf_thres, iou=opt.iou_thres)
 
         # Get class name(s) from the YOLO model
         target_name = model.module.names if hasattr(model, 'module') else model.names
@@ -124,10 +125,10 @@ class Detect:
         print(f'Image name: {image_name}')
 
         parser.add_argument('--weights', nargs='+', type=str, default=best_weight, help='model.pt path(s)')
-        parser.add_argument('--source', type=str, default=f'{saved_path}/{image_name}.png', help='source')  # file/folder, 0 for webcam
+        parser.add_argument('--source', type=str, default=f'{saved_path}/{image_name}.png', help='source')
         parser.add_argument('--img-size', type=int, default=416, help='inference size (pixels)')
         parser.add_argument('--conf-thres', type=float, default=conf, help='object confidence threshold')
-        parser.add_argument('--iou-thres', type=float, default=0.5, help='IOU threshold for NMS')
+        parser.add_argument('--iou-thres', type=float, default=0.25, help='IOU threshold for NMS')
         parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
         parser.add_argument('--view-img', action='store_true', help='display results')
         parser.add_argument('--save-txt', action='store_true', default=True, help='save results to *.txt')
