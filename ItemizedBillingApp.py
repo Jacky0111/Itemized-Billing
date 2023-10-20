@@ -1,5 +1,6 @@
 import os
 import wx
+import cv2
 import shutil
 from datetime import datetime
 
@@ -61,23 +62,51 @@ class ItemizedBillingApp:
             # converter = PDFToImageConverter()
             # converter.convertMultiplePdfs(self.dataset_path, self.images_path)
 
-            print(f'output_folder: {self.output_folder_path}')
-            print(f'img_name_list: {img_list}')
-
             print('---------------------------------------Detecting Table----------------------------------------')
             for output_folder, img in zip(self.output_folder_path, img_list):
                 Detect.parseOpt(output_folder, img, 'table.pt', 0.8)
 
             print('----------------------------------------Detecting Row-----------------------------------------')
+            # Create a list of modified image names
             new_img_list = [name + '_crop' for name in img_list]
+
             for output_folder, img in zip(self.output_folder_path, new_img_list):
-                Detect.parseOpt(output_folder, img, 'row.pt', 0.4)
+                # Utilize the 'parseOpt' method to detect rows using the 'row.pt' file and a threshold of 0.4
+                Detect.parseOpt(output_folder, img, 'row.pt', 0.3)
+
+                # Define paths for the table image and row boxes
+                table_img_path = f'{output_folder}/{img}.png'
+                row_boxes_path = f'{output_folder}/labels/row_boxes.txt'
+
+                # Read the table image
+                tb_img = cv2.imread(table_img_path)
+
+                # Read values from the row boxes text file
+                with open(row_boxes_path, 'r') as file:
+                    lines = file.readlines()
+                # Remove the first value of the line and convert them to a nested list
+                values = [list(map(float, line.strip().split()[1:])) for line in lines]
+
+                # Convert the format to xywh and draw lines on the image
+                for value in values:
+                    x, y, w, h = value[0], value[1], value[2], value[3]
+                    x = int((x - w / 2 + h / 2) * tb_img.shape[1])
+                    y = int((y + h / 2) * tb_img.shape[0])
+                    w = int(w * tb_img.shape[1])
+                    h = int(h * tb_img.shape[0])
+
+                    # Draw lines on the image
+                    cv2.line(tb_img, (0, y), (tb_img.shape[0] + w, y), (255, 0, 0), 2)
+                    cv2.line(tb_img, (0, y - h), (tb_img.shape[0] + w, y - h), (255, 0, 0), 2)
+
+                # Save the annotated image
+                cv2.imwrite(f'{output_folder}/{img[:-5]}_row_revised.png', tb_img)
 
             # print('-----------------------------------------Applying OCR-----------------------------------------')
 
     '''
     A main menu that allows user to choose either create a dataset or run ocr.
-    @:return int
+    @return int: User's choice
     '''
     @staticmethod
     def menu():
@@ -88,7 +117,11 @@ class ItemizedBillingApp:
         return int(input('Enter your choice: '))
 
     '''
-    Set the PDF and images folder path name
+    Set the PDF and images folder path name.
+    @param subfolder: a string/list of strings representing the name of the subfolder(s) are to be created.
+    @param parent: a string representing the name of the parent folder. Default is None.
+    @return folder_path: string or list of strings representing the created folder paths.
+
     '''
     @staticmethod
     def setFolderPath(subfolder, parent=None):
@@ -104,6 +137,10 @@ class ItemizedBillingApp:
 
         return folder_path
 
+    '''
+    Create a new folder if it does not already exist.
+    @param directory: a string representing the path of the directory to be created.
+    '''
     @staticmethod
     def createFolder(directory):
         try:
@@ -114,7 +151,8 @@ class ItemizedBillingApp:
 
     '''
     Select any files locally by popping up a window.
-    @return path
+    @param allow_images: a boolean indicating whether to allow only image files or all files. Default is False.
+    @return paths: a list of strings representing the selected file paths.
     '''
     @staticmethod
     def chooseFile(allow_images=False):
@@ -136,6 +174,11 @@ class ItemizedBillingApp:
 
         return paths
 
+    '''
+    Process the selected files by copying them to the specified destination folder.
+    @param files: a list of strings representing the paths of the files to be processed.
+    @param destination: a string representing the path of the destination folder.
+    '''
     @staticmethod
     def processSelectedFiles(files, destination):
         # Remove existing files in the destination folder
