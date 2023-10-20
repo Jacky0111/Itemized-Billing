@@ -43,8 +43,8 @@ class Detect:
 
         # Load model
         model = YOLO(weights)
-        results = model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half, save=True,
-                                conf=opt.conf_thres, iou=opt.iou_thres)
+        results = model.predict(source=source, save_txt=save_txt, imgsz=imgsz, half=half,
+                                save=True, conf=opt.conf_thres, iou=opt.iou_thres)
 
         # Get class name(s) from the YOLO model
         target_name = model.module.names if hasattr(model, 'module') else model.names
@@ -69,7 +69,7 @@ class Detect:
             list_values = lines[1]
             if save_txt:
                 try:
-                    with open(f'{save_dir}/table_box.txt', 'a') as f:
+                    with open(f'{save_dir}/labels/table_box.txt', 'a') as f:
                         # Write the first element of the tuple (tensor) as a float
                         f.write('%g ' % tensor_values.item())  # Extract the float value from the tensor and write it
 
@@ -79,7 +79,7 @@ class Detect:
 
                         f.write('\n')  # Add a newline character at the end of the line
                 except (ValueError, RuntimeError):
-                    with open(f'{save_dir}/row_boxes.txt', 'a') as f:
+                    with open(f'{save_dir}/labels/row_boxes.txt', 'a') as f:
                         # Loop through the values
                         for i in range(len(list_values) // 4):
                             start = i * 4
