@@ -8,6 +8,7 @@ from Detect import Detect
 from Conversion.Conversion import Converter
 from OpticalCharacterRecognition import OCR
 
+
 class ItemizedBillingApp:
     text_path = None
     images_path = None
@@ -80,6 +81,7 @@ class ItemizedBillingApp:
 
                 # Read the table image
                 tb_img = cv2.imread(table_img_path)
+                crop_img = tb_img.copy()
 
                 # Read values from the row boxes text file
                 with open(row_boxes_path, 'r') as file:
@@ -94,6 +96,10 @@ class ItemizedBillingApp:
                     for value in values:
                         file.write(f'0 {value[0]} {value[1]} {value[2]} {value[3]}\n')
 
+                # Create "Row" folder
+                os.makedirs(os.path.join(output_folder, 'Row'), exist_ok=True)
+                row_folder = f'{output_folder}/Row'
+
                 # Convert the format to xywh and draw lines on the image
                 for idx, value in enumerate(values):
                     x, y, w, h = value[0], value[1], value[2], value[3]
@@ -107,18 +113,17 @@ class ItemizedBillingApp:
                     cv2.line(tb_img, (0, y - h), (tb_img.shape[0] + w, y - h), (255, 0, 0), 2)
 
                     # Crop the row based on the coordinates
-                    cropped_row = tb_img[y - h:y, 0:tb_img.shape[1]]
-                    # Create "Row" folder
-                    os.makedirs(os.path.join(output_folder, 'Row'), exist_ok=True)
+                    cropped_row = crop_img[y - h:y, 0:crop_img.shape[1]]
 
                     # Save the cropped row in the 'Row' folder
-                    cv2.imwrite(f'{output_folder}/Row/row_{str(idx).zfill(3)}.png', cropped_row)
+                    cv2.imwrite(f'{row_folder}/row_{str(idx).zfill(3)}.png', cropped_row)
 
                 # Save the annotated image
                 cv2.imwrite(f'{output_folder}/{img[:-5]}_row_revised.png', tb_img)
 
-            # print('-----------------------------------------Applying OCR-----------------------------------------')
-
+                print('-----------------------------------------Applying OCR-----------------------------------------')
+                ocr = OCR(output_folder, row_folder)
+                ocr.runner()
     '''
     A main menu that allows user to choose either create a dataset or run ocr.
     @return int: User's choice
