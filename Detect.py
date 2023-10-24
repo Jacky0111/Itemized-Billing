@@ -8,7 +8,6 @@ from pathlib import Path
 from ultralytics import YOLO
 from ultralytics.utils import set_logging
 from ultralytics.utils.ops import xyxy2xywh
-from ultralytics.utils.files import increment_path
 from ultralytics.utils.torch_utils import select_device
 from ultralytics.utils.plotting import Annotator, save_one_box
 
