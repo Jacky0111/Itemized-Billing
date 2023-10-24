@@ -4,7 +4,6 @@
 *.cache
 *.xml
 *.iml
-.ipynb_checkpoints/yolov8-checkpoint.ipynb
 Crop_Images
 CVAT/KPJ
 OCR_Output
