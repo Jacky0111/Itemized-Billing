@@ -6,7 +6,7 @@ from datetime import datetime
 
 from Detect import Detect
 from Conversion.Conversion import Converter
-
+from OpticalCharacterRecognition import OCR
 
 class ItemizedBillingApp:
     text_path = None
@@ -84,11 +84,18 @@ class ItemizedBillingApp:
                 # Read values from the row boxes text file
                 with open(row_boxes_path, 'r') as file:
                     lines = file.readlines()
-                # Remove the first value of the line and convert them to a nested list
-                values = [list(map(float, line.strip().split()[1:])) for line in lines]
+                    # Remove the first value of the line and convert them to a nested list
+                    values = [list(map(float, line.strip().split()[1:])) for line in lines]
+                    # Sort based on the third value (y) in ascending order
+                    values.sort(key=lambda j: j[1], reverse=False)
+
+                # Update the text file with the sorted values
+                with open(row_boxes_path, 'w') as file:
+                    for value in values:
+                        file.write(f'0 {value[0]} {value[1]} {value[2]} {value[3]}\n')
 
                 # Convert the format to xywh and draw lines on the image
-                for value in values:
+                for idx, value in enumerate(values):
                     x, y, w, h = value[0], value[1], value[2], value[3]
                     x = int((x - w / 2 + h / 2) * tb_img.shape[1])
                     y = int((y + h / 2) * tb_img.shape[0])
@@ -98,6 +105,14 @@ class ItemizedBillingApp:
                     # Draw lines on the image
                     cv2.line(tb_img, (0, y), (tb_img.shape[0] + w, y), (255, 0, 0), 2)
                     cv2.line(tb_img, (0, y - h), (tb_img.shape[0] + w, y - h), (255, 0, 0), 2)
+
+                    # Crop the row based on the coordinates
+                    cropped_row = tb_img[y - h:y, 0:tb_img.shape[1]]
+                    # Create "Row" folder
+                    os.makedirs(os.path.join(output_folder, 'Row'), exist_ok=True)
+
+                    # Save the cropped row in the 'Row' folder
+                    cv2.imwrite(f'{output_folder}/Row/row_{str(idx).zfill(3)}.png', cropped_row)
 
                 # Save the annotated image
                 cv2.imwrite(f'{output_folder}/{img[:-5]}_row_revised.png', tb_img)
