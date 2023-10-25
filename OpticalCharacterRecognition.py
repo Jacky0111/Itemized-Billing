@@ -31,6 +31,8 @@ class OCR:
     '--psm 4' represents the Page Segmentation Mode and 4 assumes a single column of text.
     '''
     def runner(self):
+        df1 = pd.DataFrame()
+
         # Loop through all images
         for file in os.listdir(self.images_path):
             # Construct the full path of the current image file
@@ -38,25 +40,31 @@ class OCR:
             img = cv2.imread(img_path)
 
             # Process the image using the imageToData method
-            data, df = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
-            df = df.loc[:, 'left':]
+            data, df2 = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
+            # df = df.loc[:, 'left':]
+
+            # Concatenate the data to the final DataFrame
+            df1 = pd.concat([df1, df2], ignore_index=True)
+
+            # Draw bounding boxes on the image
             self.drawBoundingBox(img, data)
 
             cv2.imwrite(self.images_path + f'/bbox_{file}', img)
+        self.saveToCSV(df1)
 
         # print(f'Current counter is {self.counter}')
         # self.data, self.counter = self.header.runner(df, self.counter) if self.identifyClass(
         #     os.path.split(img_path)[1]) == 'head' \
         #     else self.content.runner(df, img, self.counter, self.path)
         # print(f'Current counter is {self.counter}')
-        self.saveToCSV(self.output_path)
+        # self.saveToCSV(df)
 
     '''
     Saved recognized text to json file
     @param path
     '''
-    def saveToCSV(self, path):
-        pass
+    def saveToCSV(self, data):
+        data.to_csv(f'{self.output_path}/data.csv', index=False)
 
     '''
     Perform image_to_data using pytesseract and store the data into DataFrame
@@ -69,7 +77,7 @@ class OCR:
         data = pytesseract.image_to_data(img, config=config)
         s = io.StringIO(data)
         df = pd.read_csv(s, sep="\t")
-        df = df.dropna()
+        # df = df.dropna()
         # df.drop(df[(df.conf == 95)].index, inplace=True)
         return data, df
 
