@@ -31,7 +31,7 @@ class OCR:
     '--psm 4' represents the Page Segmentation Mode and 4 assumes a single column of text.
     '''
     def runner(self):
-        df1 = pd.DataFrame()
+        df = pd.DataFrame()
 
         # Loop through all images
         for file in os.listdir(self.images_path):
@@ -40,17 +40,17 @@ class OCR:
             img = cv2.imread(img_path)
 
             # Process the image using the imageToData method
-            data, df2 = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
-            # df = df.loc[:, 'left':]
+            data, temp_df = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
+            temp_df = temp_df.loc[:, 'left':]
 
             # Concatenate the data to the final DataFrame
-            df1 = pd.concat([df1, df2], ignore_index=True)
+            df = pd.concat([df, temp_df], ignore_index=True)
 
             # Draw bounding boxes on the image
             self.drawBoundingBox(img, data)
 
             cv2.imwrite(self.images_path + f'/bbox_{file}', img)
-        self.saveToCSV(df1)
+        self.saveToCSV(df)
 
         # print(f'Current counter is {self.counter}')
         # self.data, self.counter = self.header.runner(df, self.counter) if self.identifyClass(
@@ -77,7 +77,7 @@ class OCR:
         data = pytesseract.image_to_data(img, config=config)
         s = io.StringIO(data)
         df = pd.read_csv(s, sep="\t")
-        # df = df.dropna()
+        df = df.dropna()
         # df.drop(df[(df.conf == 95)].index, inplace=True)
         return data, df
 
