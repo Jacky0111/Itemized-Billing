@@ -14,7 +14,7 @@ class ImagePreprocessing:
     Apply Gaussian blur to reduce noise and smooth the image.
     '''
     @staticmethod
-    def GaussianBlur(img, kernel_size=(3, 3)):
+    def GaussianBlur(img, kernel_size=(5, 5)):
         return cv2.GaussianBlur(img, kernel_size, 0)
 
     '''
