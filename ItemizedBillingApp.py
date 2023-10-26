@@ -59,10 +59,6 @@ class ItemizedBillingApp:
             for source_path, dest_path in zip(img_path, self.output_folder_path):
                 shutil.copy(source_path, dest_path)
 
-            # print('-----------------------------------Converting PDF to image------------------------------------')
-            # converter = PDFToImageConverter()
-            # converter.convertMultiplePdfs(self.dataset_path, self.images_path)
-
             print('---------------------------------------Detecting Table----------------------------------------')
             for output_folder, img in zip(self.output_folder_path, img_list):
                 Detect.parseOpt(output_folder, img, 'table.pt', 0.8)
