@@ -17,8 +17,9 @@ class OCR:
     is_non_native = False
 
     counter = 0
-
     data = dict()
+    table_data_list = []
+    data_coordinate_list = []
 
     def __init__(self, output_path, images_path):
         self.data.clear()
@@ -32,9 +33,10 @@ class OCR:
     '''
     def runner(self):
         df = pd.DataFrame()
+        content = ''
 
         # Loop through all images
-        for file in os.listdir(self.images_path):
+        for idx, file in enumerate(os.listdir(self.images_path)):
             # Construct the full path of the current image file
             img_path = os.path.join(self.images_path, file)
             img = cv2.imread(img_path)
@@ -50,21 +52,58 @@ class OCR:
             self.drawBoundingBox(img, data)
 
             cv2.imwrite(self.images_path + f'/bbox_{file}', img)
-        self.saveToCSV(df)
 
-        # print(f'Current counter is {self.counter}')
-        # self.data, self.counter = self.header.runner(df, self.counter) if self.identifyClass(
-        #     os.path.split(img_path)[1]) == 'head' \
-        #     else self.content.runner(df, img, self.counter, self.path)
-        # print(f'Current counter is {self.counter}')
-        # self.saveToCSV(df)
+            row_list = []
+            for index, row in temp_df.iterrows():
+                x1 = row['left']
+                y1 = row['top']
+                w1 = row['width']
+                h1 = row['height']
+                conf = row['conf']
+                text = row['text']
+
+                if len(temp_df) == 1:
+                    print('2nd condition', text)
+                    row_list = [text]
+
+                elif index == 0:
+                    print('1st condition', text)
+                    content = text
+
+                else:
+                    print('3nd condition', text)
+
+                    previous_row = temp_df.iloc[index - 1]
+                    x2 = previous_row['left']
+                    y2 = previous_row['top']
+                    w2 = previous_row['width']
+
+                    distance = x1 - (x2 + w2)
+                    if distance < 40:
+                        content += ' ' + text
+                        if index + 1 == len(temp_df):
+                            row_list.append(content)
+                    else:
+                        row_list.append(content)
+                        content = text
+
+                print(f'content: {content}')
+            print(f'row_list: {row_list}')
+            print('=========================================================')
+
+            self.table_data_list.append(row_list)
+
+        for i, ele in enumerate(self.table_data_list):
+            print(f'{i}. {ele}')
+
+        self.saveToCSV(df)
 
     '''
     Saved recognized text to json file
     @param path
     '''
     def saveToCSV(self, data):
-        data.to_csv(f'{self.output_path}/data.csv', index=False)
+        data.to_csv(f'{self.output_path}/image_to_data.csv', index=False)
 
     '''
     Perform image_to_data using pytesseract and store the data into DataFrame
@@ -78,7 +117,7 @@ class OCR:
         s = io.StringIO(data)
         df = pd.read_csv(s, sep="\t")
         df = df.dropna()
-        # df.drop(df[(df.conf == 95)].index, inplace=True)
+        df = df.reset_index(drop=True)  # Reset the index
         return data, df
 
     '''
@@ -101,8 +140,6 @@ class OCR:
                 x, y, w, h = int(box[6]), int(box[7]), int(box[8]), int(box[9])
                 cv2.rectangle(img, (x, y), (w + x, h + y), red, 1)
                 cv2.putText(img, box[11] + ' ' + str(i), (x, y), font, 0.5, red, 1)
-
-        # cv2.imwrite('bbox.png', img)
 
     '''
     Check whether the confidence scores of the image is high enough in order to determine native and non-native pdf
