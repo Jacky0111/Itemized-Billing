@@ -8,10 +8,13 @@ class TabularRule:
         self.data = data
 
     def runner(self):
+        self.tableRules()
+        self.headerRules()
+        self.contentRules()
+
+    def tableRules(self):
         content = ''
         row_list = []
-
-        print(self.data)
 
         for index, (x1, text) in enumerate(zip(self.data['left'], self.data['text'])):
             previous_row = self.data.iloc[index - 1]
@@ -20,29 +23,29 @@ class TabularRule:
             distance = x1 - (x2 + w2)
 
             if TabularRule.rule1(self.data):
-                print('rule 1')
                 row_list = [text]
             elif TabularRule.rule2(index):
-                print('rule 2')
                 content = text
             elif TabularRule.rule3(distance):
-                print('rule 3')
                 content += ' ' + text
             elif TabularRule.rule4(distance, index, self.data):
-                print('rule 4')
                 row_list.append(content)
             elif TabularRule.rule5(distance, index, self.data):
-                print('rule 5')
                 row_list.append(content)
                 content = text
                 row_list.append(content)
             elif TabularRule.rule6(distance):
-                print('rule 6')
                 row_list.append(content)
                 content = text
 
             print(f'content: {content}')
         return row_list
+
+    def headerRules(self):
+        pass
+
+    def contentRules(self):
+        pass
 
     '''
     Rule 1: If the row only has 1 element.
@@ -73,6 +76,7 @@ class TabularRule:
 
     '''
     Rule 4: If the distance is lower than 40 and last element of the row.
+    @param dist
     @param counter
     @param data
     @return True if rule is applied, False otherwise.
@@ -83,6 +87,7 @@ class TabularRule:
 
     '''
     Rule 5: If the distance is higher or equal to 40 and last element of the row.
+    @param dist
     @param counter
     @param data
     @return True if rule is applied, False otherwise.
@@ -98,4 +103,13 @@ class TabularRule:
     '''
     @staticmethod
     def rule6(dist):
+        return dist >= 40
+
+    '''
+    Rule 7: For KPJ hospital bill, add "Item" as the first column name.
+    @param dist
+    @return True if rule is applied, False otherwise.
+    '''
+    @staticmethod
+    def rule7(dist):
         return dist >= 40
