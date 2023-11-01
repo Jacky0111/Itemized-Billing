@@ -55,6 +55,7 @@ class OCR:
 
             cv2.imwrite(self.images_path + f'/bbox_{file}', img)
 
+            # Store the bill in tabular format
             tr = TabularRule(temp_df)
             row = tr.runner()
 
