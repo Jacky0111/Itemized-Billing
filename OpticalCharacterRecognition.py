@@ -8,6 +8,8 @@ import pandas as pd
 import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
+from TabularRule import TabularRule
+
 
 class OCR:
     header = None
@@ -53,49 +55,19 @@ class OCR:
 
             cv2.imwrite(self.images_path + f'/bbox_{file}', img)
 
-            row_list = []
-            for index, row in temp_df.iterrows():
-                x1 = row['left']
-                y1 = row['top']
-                w1 = row['width']
-                h1 = row['height']
-                conf = row['conf']
-                text = row['text']
+            tr = TabularRule(temp_df)
+            row = tr.runner()
 
-                if len(temp_df) == 1:
-                    print('2nd condition', text)
-                    row_list = [text]
-
-                elif index == 0:
-                    print('1st condition', text)
-                    content = text
-
-                else:
-                    print('3nd condition', text)
-
-                    previous_row = temp_df.iloc[index - 1]
-                    x2 = previous_row['left']
-                    y2 = previous_row['top']
-                    w2 = previous_row['width']
-
-                    distance = x1 - (x2 + w2)
-                    if distance < 40:
-                        content += ' ' + text
-                        if index + 1 == len(temp_df):
-                            row_list.append(content)
-                    else:
-                        row_list.append(content)
-                        content = text
-
-                print(f'content: {content}')
-            print(f'row_list: {row_list}')
+            print(f'row_list: {row}')
             print('=========================================================')
 
-            self.table_data_list.append(row_list)
+            self.table_data_list.append(row)
 
         for i, ele in enumerate(self.table_data_list):
             print(f'{i}. {ele}')
 
+        # df_new = pd.DataFrame(self.table_data_list[1:], columns=self.table_data_list[0])
+        # df_new.to_csv(f'{self.output_path}/output.csv', index=False)
         self.saveToCSV(df)
 
     '''
