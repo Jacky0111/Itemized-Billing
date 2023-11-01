@@ -3,7 +3,7 @@
   <component name="Black">
     <option name="executionMode" value="BINARY" />
     <option name="pathToExecutable" value="C:\Program Files\Python38\Scripts\black.exe" />
-    <option name="sdkUUID" value="8b69a7df-8c29-4edf-a2ea-907f44cb71e6" />
+    <option name="sdkName" value="Python 3.10 (Itemized-Billing)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (Itemized-Billing)" project-jdk-type="Python SDK" />
 </project>
