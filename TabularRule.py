@@ -1,20 +1,29 @@
 import pandas as pd
 
+from Header import Header
+from Body import Body
+
 
 class TabularRule:
+    first = None  # Header condition
+    body = None
+    header = None
+    row_list = []
     data = pd.DataFrame()
 
-    def __init__(self, data):
+    def __init__(self, data, first):
+        self.header = Header()
+        self.body = Body()
         self.data = data
+        self.first = first
+        self.row_list = []
 
     def runner(self):
         self.tableRules()
-        self.headerRules()
-        self.contentRules()
+        self.headerRules() if self.header.identity == 'head' else self.contentRules()
 
     def tableRules(self):
         content = ''
-        row_list = []
 
         for index, (x1, text) in enumerate(zip(self.data['left'], self.data['text'])):
             previous_row = self.data.iloc[index - 1]
@@ -23,23 +32,30 @@ class TabularRule:
             distance = x1 - (x2 + w2)
 
             if TabularRule.rule1(self.data):
-                row_list = [text]
+                print('Comply Rule 1')
+                self.row_list = [text]
             elif TabularRule.rule2(index):
+                print('Comply Rule 2')
                 content = text
-            elif TabularRule.rule3(distance):
+            elif TabularRule.rule3(distance, index, self.data):
+                print('Comply Rule 3')
+                self.row_list.append(content)
+            elif TabularRule.rule4(distance):
+                print('Comply Rule 4')
                 content += ' ' + text
-            elif TabularRule.rule4(distance, index, self.data):
-                row_list.append(content)
             elif TabularRule.rule5(distance, index, self.data):
-                row_list.append(content)
+                print('Comply Rule 5')
+                self.row_list.append(content)
                 content = text
-                row_list.append(content)
+                self.row_list.append(content)
             elif TabularRule.rule6(distance):
-                row_list.append(content)
+                print('Comply Rule 6')
+                self.row_list.append(content)
                 content = text
 
-            print(f'content: {content}')
-        return row_list
+        # Hardcode for KPJ Hospital
+        if self.first:
+            self.row_list = ['Item'] + self.row_list
 
     def headerRules(self):
         pass
@@ -52,6 +68,7 @@ class TabularRule:
     @param data
     @return True if rule is applied, False otherwise.
     '''
+
     @staticmethod
     def rule1(data):
         return len(data) == 1
@@ -61,29 +78,32 @@ class TabularRule:
     @param counter
     @return True if rule is applied, False otherwise.
     '''
+
     @staticmethod
     def rule2(counter):
         return counter == 0
 
     '''
-    Rule 3: If the distance is lower than 40.
-    @param dist
-    @return True if rule is applied, False otherwise.
-    '''
-    @staticmethod
-    def rule3(dist):
-        return dist < 40
-
-    '''
-    Rule 4: If the distance is lower than 40 and last element of the row.
+    Rule 3: If the distance is lower than 40 and last element of the row.
     @param dist
     @param counter
     @param data
     @return True if rule is applied, False otherwise.
     '''
+
     @staticmethod
-    def rule4(dist, counter, data):
+    def rule3(dist, counter, data):
         return dist < 40 and counter == len(data) - 1
+
+    '''
+    Rule 4: If the distance is lower than 40.
+    @param dist
+    @return True if rule is applied, False otherwise.
+    '''
+
+    @staticmethod
+    def rule4(dist):
+        return dist < 40
 
     '''
     Rule 5: If the distance is higher or equal to 40 and last element of the row.
@@ -92,6 +112,7 @@ class TabularRule:
     @param data
     @return True if rule is applied, False otherwise.
     '''
+
     @staticmethod
     def rule5(dist, counter, data):
         return dist >= 40 and counter == len(data) - 1
@@ -101,6 +122,7 @@ class TabularRule:
     @param dist
     @return True if rule is applied, False otherwise.
     '''
+
     @staticmethod
     def rule6(dist):
         return dist >= 40
@@ -110,6 +132,7 @@ class TabularRule:
     @param dist
     @return True if rule is applied, False otherwise.
     '''
+
     @staticmethod
     def rule7(dist):
         return dist >= 40
