@@ -8,5 +8,13 @@ class Body(Bill):
         super().__init__(x, y, width, height, conf, text, identity)
         self.identity = self.TYPE_BODY
 
+    '''
+    Execute function
+    '''
+    def runner(self):
+        print('------------------------------------  -This row is Body---------------------------------------')
+        print('-------------------------------------Assigning Coordinate-------------------------------------')
+        whole = super().assignCoordinate(df)
+
     def __str__(self):
         return super.__str__(self)
