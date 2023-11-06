@@ -12,6 +12,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 
 class OCR:
+    code = None
     header = None
     content = None
     output_path = None  # Current save path
@@ -23,7 +24,8 @@ class OCR:
     table_data_list = []
     data_coordinate_list = []
 
-    def __init__(self, output_path, images_path):
+    def __init__(self, code, output_path, images_path):
+        self.code = code
         self.output_path = output_path
         self.images_path = images_path
 
@@ -43,6 +45,10 @@ class OCR:
             # Process the image using the imageToData method
             data, temp_df = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
             temp_df = temp_df.loc[:, 'left':]
+
+            # Additional step to check whether the header is correct detected
+            if idx == 0:
+                temp_df = self.checkHospital(temp_df)
 
             # Concatenate the data to the final DataFrame
             self.df = pd.concat([self.df, temp_df], ignore_index=True)
@@ -65,7 +71,6 @@ class OCR:
     Saved recognized text to json file
     @param path
     '''
-
     def saveToCSV(self, data):
         data.to_csv(f'{self.output_path}/image_to_data.csv', index=False)
 
@@ -75,7 +80,6 @@ class OCR:
     @param config
     @return data, df
     '''
-
     @staticmethod
     def imageToData(img, config):
         data = pytesseract.image_to_data(img, config=config)
@@ -111,7 +115,6 @@ class OCR:
     Check whether the confidence scores of the image is high enough in order to determine native and non-native pdf
     @param df
     '''
-
     @staticmethod
     def checkConfidenceScore(df):
         df_conf = df.loc[(df['conf'] > 0) & (df['conf'] <= 70)]
@@ -123,17 +126,34 @@ class OCR:
         except ZeroDivisionError:
             print(f'{df_conf.shape[0]} / {df.shape[0]} = ALL PASS')
 
-    '''
-    Identify the object detected
-    @param name
-    @return cls
-    '''
+    def checkHospital(self, data):
+        if self.code == 'BAGAN':
+            return OCR.BAGANAdjustment(data)
+        elif self.code == 'GNC':
+            return OCR.GNCAdjustment(data)
+        elif self.code == 'KPJ':
+            return OCR.KPJAdjustment(data)
+        elif self.code == 'RSH':
+            return OCR.RSHAdjustment(data)
 
     @staticmethod
-    def identifyClass(name):
-        cls = None
-        if re.search('head', os.path.split(name)[1]):
-            cls = 'head'
-        elif re.search('content', os.path.split(name)[1]):
-            cls = 'content'
-        return cls
+    def BAGANAdjustment(data):
+        return
+
+    @staticmethod
+    def GNCAdjustment(data):
+        return
+
+    @staticmethod
+    def KPJAdjustment(data):
+        first_column = {'left': 0, 'top': data['top'][0], 'width': 0, 'height': 0, 'conf': 0, 'text': 'Item'}
+        # Insert the new row at the beginning of the DataFrame
+        data = pd.concat([pd.DataFrame(first_column, index=[0]), data]).reset_index(drop=True)
+
+        return data
+
+    @staticmethod
+    def RSHAdjustment(data):
+        return
+
+
