@@ -19,8 +19,8 @@ class TabularRule:
         self.row_list = []
 
     def runner(self):
+        # self.headerRules() if self.first is True else self.contentRules()
         self.tableRules()
-        self.headerRules() if self.header.identity == 'head' else self.contentRules()
 
     def tableRules(self):
         content = ''
@@ -53,12 +53,8 @@ class TabularRule:
                 self.row_list.append(content)
                 content = text
 
-        # Hardcode for KPJ Hospital
-        if self.first:
-            self.row_list = ['Item'] + self.row_list
-
     def headerRules(self):
-        pass
+        self.header.runner(self.data)
 
     def contentRules(self):
         pass
