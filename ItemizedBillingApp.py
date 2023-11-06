@@ -1,3 +1,4 @@
+import re
 import os
 import wx
 import cv2
@@ -25,7 +26,7 @@ class ItemizedBillingApp:
     Execution function
     '''
     def runner(self):
-        choice = self.menu()
+        choice = self.mainMenu()
 
         if choice == 1:
             print('--------------------------------------Generating Dataset--------------------------------------')
@@ -45,9 +46,21 @@ class ItemizedBillingApp:
             converter.pdfToImages(self.dataset_path, self.images_path)
 
         elif choice == 2:
+            sub_choice = self.subMenu()
+
+            hospital_code = None
+            if sub_choice == 1:
+                hospital_code = 'BAGAN'
+            elif sub_choice == 2:
+                hospital_code = 'GNC'
+            elif sub_choice == 3:
+                hospital_code = 'KPJ'
+            elif sub_choice == 4:
+                hospital_code = 'RSH'
+
             print('----------------------------------------Choosing File-----------------------------------------')
             # Use the file selection dialog to choose a file(s)
-            img_path = self.chooseFile()
+            img_path = self.chooseFile(True, hospital_code)
 
             # Extract the pdf/img name from `img_path`
             img_list = [os.path.splitext(os.path.basename(path))[0] for path in img_path if path.lower()]
@@ -118,19 +131,33 @@ class ItemizedBillingApp:
                 cv2.imwrite(f'{output_folder}/{img[:-5]}_row_revised.png', tb_img)
 
                 print('-----------------------------------------Applying OCR-----------------------------------------')
-                ocr = OCR(output_folder, row_folder)
+                ocr = OCR(hospital_code, output_folder, row_folder)
                 ocr.runner()
     '''
     A main menu that allows user to choose either create a dataset or run ocr.
     @return int: User's choice
     '''
     @staticmethod
-    def menu():
+    def mainMenu():
         print('MAIN MENU')
         print('=========')
         print('1. Create Dataset')
         print('2. Run OCR')
         return int(input('Enter your choice: '))
+
+    '''
+    A main menu that allows user to choose either create a dataset or run ocr.
+    @return int: User's choice
+    '''
+    @staticmethod
+    def subMenu():
+        print('\nHospital MENU')
+        print('=============')
+        print('1. BAGAN Specialist Center')
+        print('2. Glenegales')
+        print('3. KPJ Healthcare')
+        print('4. Regency Specialist Center')
+        return int(input('Enter your hospital: '))
 
     '''
     Set the PDF and images folder path name.
@@ -171,22 +198,31 @@ class ItemizedBillingApp:
     @return paths: a list of strings representing the selected file paths.
     '''
     @staticmethod
-    def chooseFile(allow_images=False):
+    def chooseFile(allow_images=False, code=None):
+        # Initializes a wxPython application
         app = wx.App(None)
+        # Specifies the style for the file dialog, ensuring that the user can only select existing files
         style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE | wx.DD_DIR_MUST_EXIST
-        wildcard = "All files (*.*)|*.*"
+        wildcard = "All files|*.*"
 
         if allow_images:
-            wildcard = "Image files (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp|" + wildcard
+            wildcard = "Image files|*.png;*.jpg;*.jpeg;*.bmp|" + wildcard
 
+        if code:
+            all_files = [f for f in os.listdir('CVAT/Training Set') if code in f]
+            if all_files:
+                wildcard = f"KPJ files|{';'.join(all_files)}|" + wildcard
+
+        # Creates a file dialog window with the specified title and style.
         dialog = wx.FileDialog(None, 'Open', wildcard=wildcard, style=style)
 
+        # Checks if the user has selected a file in the file dialog
         if dialog.ShowModal() == wx.ID_OK:
-            paths = dialog.GetPaths()
+            paths = dialog.GetPaths()  # Retrieves the path of the selected file
         else:
             paths = []
 
-        dialog.Destroy()
+        dialog.Destroy()  # Destroys the file dialog window.
 
         return paths
 
