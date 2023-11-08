@@ -16,8 +16,8 @@ class Header(Bill):
         print('------------------------------------ -This row is Header--------------------------------------')
         print('-------------------------------------Assigning Coordinate-------------------------------------')
         data = super().assignCoordinate(df)
-        print('----------------------------------Adjusting Column Threshold----------------------------------')
-        self.columnThreshold(data)
+        # print('----------------------------------Adjusting Column Threshold----------------------------------')
+        # self.columnThreshold(data)
 
     def columnThreshold(self, text_list):
         midpoint = 0
