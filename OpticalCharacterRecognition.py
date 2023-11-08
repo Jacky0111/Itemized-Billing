@@ -5,6 +5,9 @@ import cv2
 import numpy as np
 import pandas as pd
 
+from Bill import Bill
+from Body import Body
+from Header import Header
 from TabularRule import TabularRule
 
 import pytesseract
@@ -12,9 +15,10 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 
 class OCR:
+    bill = None
     code = None
+    body = None
     header = None
-    content = None
     output_path = None  # Current save path
     images_path = None  # Input images path
     is_non_native = False
@@ -25,6 +29,9 @@ class OCR:
     data_coordinate_list = []
 
     def __init__(self, code, output_path, images_path):
+        self.bill = Bill()
+        self.header = Header()
+        self.body = Body()
         self.code = code
         self.output_path = output_path
         self.images_path = images_path
@@ -34,7 +41,6 @@ class OCR:
     '--oem 3' uses default LSTM OCR engine mode.
     '--psm 4' represents the Page Segmentation Mode and 4 assumes a single column of text.
     '''
-
     def runner(self):
         # Loop through all images
         for idx, file in enumerate(os.listdir(self.images_path)):
@@ -57,8 +63,10 @@ class OCR:
             self.drawBoundingBox(img, data)
             cv2.imwrite(self.images_path + f'/bbox_{file}', img)
 
+            bill_list = self.bill.assignCoordinate(temp_df)
+
             # Store the bill in tabular format
-            tr = TabularRule(temp_df, True if idx == 0 else False)
+            tr = TabularRule(bill_list, True if idx == 0 else False)
             tr.runner()
             self.table_data_list.append(tr.row_list)
 
