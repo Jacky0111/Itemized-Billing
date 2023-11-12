@@ -1,19 +1,22 @@
 class TabularRule:
-    first = None  # Header condition
+    head = None  # Header condition
     data = []
     row_list = []
 
     def __init__(self, data, first):
         self.data = data
-        self.first = first
+        self.head = first
         self.row_list = []
 
     def runner(self):
         self.tableRules()
-        self.headerRules() if self.first is True else self.contentRules()
+        self.headerRules() if self.head is True else self.contentRules()
 
     def tableRules(self):
+        first_x = 0
+        last_x = 0
         content = ''
+        col_range = []
 
         # for index, (x1, text) in enumerate(zip(self.data['left'], self.data['text'])):
         for index, row in enumerate(self.data):
@@ -45,6 +48,8 @@ class TabularRule:
                 print('Comply Rule 6')
                 self.row_list.append(content)
                 content = text
+
+            col_range.append((first_x, last_x))
 
     def headerRules(self):
         midpoint = 0
@@ -84,7 +89,6 @@ class TabularRule:
     @param data
     @return True if rule is applied, False otherwise.
     '''
-
     @staticmethod
     def rule1(data):
         return len(data) == 1
@@ -94,7 +98,6 @@ class TabularRule:
     @param counter
     @return True if rule is applied, False otherwise.
     '''
-
     @staticmethod
     def rule2(counter):
         return counter == 0
@@ -106,7 +109,6 @@ class TabularRule:
     @param data
     @return True if rule is applied, False otherwise.
     '''
-
     @staticmethod
     def rule3(dist, counter, data):
         return dist < 40 and counter == len(data) - 1
@@ -116,7 +118,6 @@ class TabularRule:
     @param dist
     @return True if rule is applied, False otherwise.
     '''
-
     @staticmethod
     def rule4(dist):
         return dist < 40
@@ -128,7 +129,6 @@ class TabularRule:
     @param data
     @return True if rule is applied, False otherwise.
     '''
-
     @staticmethod
     def rule5(dist, counter, data):
         return dist >= 40 and counter == len(data) - 1
@@ -138,7 +138,6 @@ class TabularRule:
     @param dist
     @return True if rule is applied, False otherwise.
     '''
-
     @staticmethod
     def rule6(dist):
         return dist >= 40
@@ -148,7 +147,6 @@ class TabularRule:
     @param dist
     @return True if rule is applied, False otherwise.
     '''
-
     @staticmethod
     def rule7(dist):
         return dist >= 40
