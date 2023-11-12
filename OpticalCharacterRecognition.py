@@ -69,10 +69,13 @@ class OCR:
             tr = TabularRule(bill_list, True if idx == 0 else False)
             tr.runner()
             self.table_data_list.append(tr.row_list)
-            print(self.bill)
+            # print(self.bill)
 
-        for i, ele in enumerate(self.table_data_list):
-            print(f'{i}. {ele}')
+        # for i, ele in enumerate(self.table_data_list):
+        #     string = f'{str(i+1)}. '
+        #     for a in ele:
+        #         string += f'{a.text}, '
+        #     print(string)
 
         self.saveToCSV(self.df)
 
