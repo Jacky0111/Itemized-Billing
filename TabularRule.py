@@ -26,7 +26,6 @@ class TabularRule:
         rule4 = False
         content = ''
 
-        # for index, (x1, text) in enumerate(zip(self.data['left'], self.data['text'])):
         for index, row in enumerate(self.data):
             rule6 = False
             x1 = row.x
@@ -38,74 +37,62 @@ class TabularRule:
             distance = x1 - (x2 + w2)
 
             if TabularRule.rule1(self.data):
-                # print('Comply Rule 1')
-                # self.row_list = [text]
+                print('Comply Rule 1')
                 xx1 = x1
                 xx2 = x1 + w1
 
                 grouped_bill = Bill(x=xx1, width=xx2-xx1, text=text, identity=self.id)
-                # print(f'x={xx1}, width={xx2 - xx1}, text={text}, identity={self.id}')
                 self.row_list = [grouped_bill]
 
             elif TabularRule.rule2(index):
-                # print('Comply Rule 2')
+                print('Comply Rule 2')
                 content = text
                 xx1 = x1
+
             elif TabularRule.rule3(distance, index, self.data):
-                # print('Comply Rule 3')
-                # self.row_list.append(content)
+                print('Comply Rule 3')
                 xx1 = xx1 if xx1 else x2
                 xx2 = x1 + w1
 
                 grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
-                # print(f'x={xx1}, width={xx2 - xx1}, text={content}, identity={self.id}')
 
                 self.row_list.append(grouped_bill)
 
             elif TabularRule.rule4(distance):
-                # print('Comply Rule 4')
+                print('Comply Rule 4')
                 content += ' ' + text
                 xx1 = x2 if not rule4 else xx1
                 rule4 = True
 
             elif TabularRule.rule5(distance, index, self.data):
-                # print('Comply Rule 5')
+                print('Comply Rule 5')
                 xx1 = x2
                 xx2 = x2 + w2
-                # self.row_list.append(content)
 
                 grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
-                # print(f'x={xx1}, width={xx2 - xx1}, text={content}, identity={self.id}')
 
                 self.row_list.append(grouped_bill)
 
                 content = text
-                # self.row_list.append(content)
                 xx1 = x1
                 xx2 = x1 + w1
 
                 grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
-                # print(f'x={xx1}, width={xx2 - xx1}, text={content}, identity={self.id}')
 
                 self.row_list.append(grouped_bill)
 
             elif TabularRule.rule6(distance):
-                # print('Comply Rule 6')
+                print('Comply Rule 6')
                 rule4 = False
                 rule6 = True
-                # self.row_list.append(content)
                 xx1 = x2 if not xx1 else xx1
                 xx2 = x2 + w2
 
                 grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
-                # print(f'x={xx1}, width={xx2 - xx1}, text={content}, identity={self.id}')
 
                 self.row_list.append(grouped_bill)
 
                 content = text
-
-            # print(xx1, xx2, content)
-            # print('=========================================================')
 
             xx1 = 0 if rule6 else xx1
             xx2 = 0 if rule6 else xx2
@@ -121,8 +108,6 @@ class TabularRule:
             x1 = ele.x
             w1 = ele.width
             x2 = self.row_list[index + 1].x if not index == len(self.row_list) - 1 else 0
-
-            # print(f'Before      x1:{x1}, w1: {w1}, x2: {x2}, text: {ele.text}')
 
             if index == 0:  # First element of the list
                 continue
@@ -140,24 +125,17 @@ class TabularRule:
                 xw1 = (x1 + w1) + midpoint
                 ele.width = xw1 - ele.x
 
-            # print(f'After       x1:{ele.x}, w1: {ele.width}, x2: {x2}, text: {ele.text}')
-            # print()
-
         self.col_range.extend((ele.x, ele.x + ele.width) for ele in self.row_list)
 
     def contentRules(self):
-        for val in self.row_list:
-            for i, coordinate in enumerate(self.col_range):
-                x1, x2 = coordinate
-                if x1 < val.x < x2 and x1 < val.x + val.width < x2:
-                    self.final_list[i] = val.text
-
-        # self.final_list = [val.text if x1 < val.x < x2 and x1 < val.x + val.width < x2 else old_val for
-        #                    old_val, (x1, x2) in zip(self.final_list, self.col_range) for val in self.row_list]
+        self.final_list = [
+            val.text
+            for val in self.row_list
+            for x1, x2 in self.col_range
+            if x1 < val.x < x2 and x1 < val.x + val.width < x2
+        ]
 
         print(self.final_list)
-
-
 
     '''
     Rule 1: If the row only has 1 element.
