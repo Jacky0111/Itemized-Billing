@@ -154,7 +154,7 @@ class ItemizedBillingApp:
         print('\nHospital MENU')
         print('=============')
         print('1. BAGAN Specialist Center')
-        print('2. Glenegales')
+        print('2. Gleneagles')
         print('3. KPJ Healthcare')
         print('4. Regency Specialist Center')
         return int(input('Enter your hospital: '))
