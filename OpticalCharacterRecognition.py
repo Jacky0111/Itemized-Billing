@@ -1,8 +1,6 @@
 import os
-import re
 import io
 import cv2
-import numpy as np
 import pandas as pd
 
 from Bill import Bill
@@ -69,22 +67,20 @@ class OCR:
             tr = TabularRule(bill_list, True if idx == 0 else False)
             tr.runner()
             self.table_data_list.append(tr.row_list)
-            # print(self.bill)
 
-        # for i, ele in enumerate(self.table_data_list):
-        #     string = f'{str(i+1)}. '
-        #     for a in ele:
-        #         string += f'{a.text}, '
-        #     print(string)
+        # Use list comprehension to create tb_list in a more concise way
+        tb_list = [[element.text for element in row] for row in self.table_data_list]
+        itemized_data = pd.DataFrame(tb_list[1:], columns=tb_list[0])
 
-        self.saveToCSV(self.df)
+        self.saveToCSV(itemized_data, 'itemized_data')
+        self.saveToCSV(self.df, 'image_to_data')
 
     '''
     Saved recognized text to json file
     @param path
     '''
-    def saveToCSV(self, data):
-        data.to_csv(f'{self.output_path}/image_to_data.csv', index=False)
+    def saveToCSV(self, data, name):
+        data.to_csv(f'{self.output_path}/{name}.csv', index=False)
 
     '''
     Perform image_to_data using pytesseract and store the data into DataFrame
