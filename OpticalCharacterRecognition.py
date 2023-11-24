@@ -75,6 +75,8 @@ class OCR:
         self.saveToCSV(itemized_data, 'itemized_data')
         self.saveToCSV(self.df, 'image_to_data')
 
+        return itemized_data
+
     '''
     Saved recognized text to json file
     @param path
