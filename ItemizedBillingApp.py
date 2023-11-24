@@ -8,7 +8,7 @@ from datetime import datetime
 from Detect import Detect
 from Conversion.Conversion import Converter
 from OpticalCharacterRecognition import OCR
-
+from TextTransformation import TextTransformation
 
 class ItemizedBillingApp:
     text_path = None
@@ -132,7 +132,14 @@ class ItemizedBillingApp:
 
                 print('-----------------------------------------Applying OCR-----------------------------------------')
                 ocr = OCR(hospital_code, output_folder, row_folder)
-                ocr.runner()
+                bill_df = ocr.runner()
+
+                print('-------------------------------------Text Transformation--------------------------------------')
+                tt = TextTransformation(bill_df)
+                bill_df = tt.spellCheck(col='Item')
+
+                bill_df.to_csv(f'{output_folder}/latest.csv', index=False)
+
     '''
     A main menu that allows user to choose either create a dataset or run ocr.
     @return int: User's choice
