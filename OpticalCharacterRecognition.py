@@ -2,6 +2,7 @@ import os
 import io
 import cv2
 import pandas as pd
+from paddleocr import PaddleOCR
 
 from Bill import Bill
 from Body import Body
@@ -92,12 +93,26 @@ class OCR:
     '''
     @staticmethod
     def imageToData(img, config):
-        data = pytesseract.image_to_data(img, config=config)
-        s = io.StringIO(data)
-        df = pd.read_csv(s, sep="\t")
-        df = df.dropna()
-        df = df.reset_index(drop=True)  # Reset the index
-        return data, df
+        paddle = PaddleOCR(use_angle_cls=True, lang='en')
+        result = paddle.ocr(img, cls=True)
+        # Extract information from the result
+        lines = []
+        for line in result:
+            for word_info in line:
+                lines.append(word_info[-1])
+
+        # Create a DataFrame from the extracted information
+        df = pd.DataFrame(lines)
+
+        print(df)
+
+        return df
+        # data = pytesseract.image_to_data(img, config=config)
+        # s = io.StringIO(data)
+        # df = pd.read_csv(s, sep="\t")
+        # df = df.dropna()
+        # df = df.reset_index(drop=True)  # Reset the index
+        # return data, df
 
     '''
     Draw the bounding box based on the coordinate from pytesseract image to data
