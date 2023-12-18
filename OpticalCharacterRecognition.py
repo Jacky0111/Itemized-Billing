@@ -48,8 +48,8 @@ class OCR:
             img = cv2.imread(img_path)
 
             # Process the image using the imageToData method
-            data, temp_df = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
-            temp_df = temp_df.loc[:, 'left':]
+            temp_df = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
+            # temp_df = temp_df.loc[:, 'left':]
 
             # Additional step to check whether the header is correct detected
             if idx == 0:
@@ -58,22 +58,22 @@ class OCR:
             # Concatenate the data to the final DataFrame
             self.df = pd.concat([self.df, temp_df], ignore_index=True)
 
-            # Draw bounding boxes on the image
-            self.drawBoundingBox(img, data)
-            cv2.imwrite(self.images_path + f'/bbox_{file}', img)
-
-            bill_list = self.bill.assignCoordinate(temp_df)
-
-            # Store the bill in tabular format
-            tr = TabularRule(bill_list, True if idx == 0 else False)
-            tr.runner()
-            self.table_data_list.append(tr.row_list)
+            # # Draw bounding boxes on the image
+            # # self.drawBoundingBox(img, data)
+            # cv2.imwrite(self.images_path + f'/bbox_{file}', img)
+            #
+            # bill_list = self.bill.assignCoordinate(temp_df)
+            #
+            # # Store the bill in tabular format
+            # tr = TabularRule(bill_list, True if idx == 0 else False)
+            # tr.runner()
+            # self.table_data_list.append(tr.row_list)
 
         # Use list comprehension to create tb_list in a more concise way
-        tb_list = [[element.text for element in row] for row in self.table_data_list]
-        itemized_data = pd.DataFrame(tb_list[1:], columns=tb_list[0])
+        # tb_list = [[element.text for element in row] for row in self.table_data_list]
+        # itemized_data = pd.DataFrame(tb_list[1:], columns=tb_list[0])
 
-        self.saveToCSV(itemized_data, 'itemized_data')
+        # self.saveToCSV(itemized_data, 'itemized_data')
         self.saveToCSV(self.df, 'image_to_data')
 
         return itemized_data
@@ -98,11 +98,23 @@ class OCR:
         # Extract information from the result
         lines = []
         for line in result:
-            for word_info in line:
-                lines.append(word_info[-1])
+            if line is None:
+                continue
+            else:
+                for word_info in line:
+                    coordinates = word_info[0]
+                    x_values, y_values = zip(*coordinates)
 
-        # Create a DataFrame from the extracted information
-        df = pd.DataFrame(lines)
+                    left, top, right, bottom = min(x_values), min(y_values), max(x_values), max(y_values)
+                    width, height = right - left, bottom - top
+
+                    text, conf = word_info[1]
+
+                    # Write a row to the CSV file
+                    lines.append([left, top, width, height, conf, text])
+
+        columns = ['left', 'top', 'width', 'height', 'conf', 'text']
+        df = pd.DataFrame(lines, columns=columns)
 
         print(df)
 
