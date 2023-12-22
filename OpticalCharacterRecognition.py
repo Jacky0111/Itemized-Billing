@@ -58,22 +58,23 @@ class OCR:
             # Concatenate the data to the final DataFrame
             self.df = pd.concat([self.df, temp_df], ignore_index=True)
 
-            # # Draw bounding boxes on the image
-            # # self.drawBoundingBox(img, data)
-            # cv2.imwrite(self.images_path + f'/bbox_{file}', img)
-            #
-            # bill_list = self.bill.assignCoordinate(temp_df)
-            #
-            # # Store the bill in tabular format
-            # tr = TabularRule(bill_list, True if idx == 0 else False)
-            # tr.runner()
-            # self.table_data_list.append(tr.row_list)
+            # Draw bounding boxes on the image
+            self.drawBoundingBox(img, self.df)
+            cv2.imwrite(self.images_path + f'/bbox_{file}', img)
+
+            bill_list = self.bill.assignCoordinate(temp_df)
+
+            # Store the bill in tabular format
+            tr = TabularRule(bill_list, True if idx == 0 else False)
+            tr.runner()
+            self.table_data_list.append(tr.row_list)
 
         # Use list comprehension to create tb_list in a more concise way
-        # tb_list = [[element.text for element in row] for row in self.table_data_list]
-        # itemized_data = pd.DataFrame(tb_list[1:], columns=tb_list[0])
+        tb_list = [[element.text for element in row] for row in self.table_data_list]
+        print(tb_list)
+        itemized_data = pd.DataFrame(tb_list[1:], columns=tb_list[0])
 
-        # self.saveToCSV(itemized_data, 'itemized_data')
+        self.saveToCSV(itemized_data, 'itemized_data')
         self.saveToCSV(self.df, 'image_to_data')
 
         return itemized_data
@@ -95,6 +96,7 @@ class OCR:
     def imageToData(img, config):
         paddle = PaddleOCR(use_angle_cls=True, lang='en')
         result = paddle.ocr(img, cls=True)
+
         # Extract information from the result
         lines = []
         for line in result:
@@ -108,7 +110,8 @@ class OCR:
                     left, top, right, bottom = min(x_values), min(y_values), max(x_values), max(y_values)
                     width, height = right - left, bottom - top
 
-                    text, conf = word_info[1]
+                    text = word_info[1][0]
+                    conf = f"{word_info[1][1]:.4f}"
 
                     # Write a row to the CSV file
                     lines.append([left, top, width, height, conf, text])
