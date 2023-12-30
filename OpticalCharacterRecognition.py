@@ -41,6 +41,8 @@ class OCR:
     '--psm 4' represents the Page Segmentation Mode and 4 assumes a single column of text.
     '''
     def runner(self):
+        self.df = pd.DataFrame()
+
         # Loop through all images
         for idx, file in enumerate(os.listdir(self.images_path)):
             # Construct the full path of the current image file
@@ -49,7 +51,7 @@ class OCR:
 
             # Process the image using the imageToData method
             temp_df = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
-            # temp_df = temp_df.loc[:, 'left':]
+            temp_df = temp_df.sort_values(by='left', ascending=True)
 
             # Additional step to check whether the header is correct detected
             if idx == 0:
@@ -59,7 +61,7 @@ class OCR:
             self.df = pd.concat([self.df, temp_df], ignore_index=True)
 
             # Draw bounding boxes on the image
-            self.drawBoundingBox(img, self.df)
+            self.drawBoundingBox(img, temp_df)
             cv2.imwrite(self.images_path + f'/bbox_{file}', img)
 
             bill_list = self.bill.assignCoordinate(temp_df)
@@ -119,8 +121,6 @@ class OCR:
         columns = ['left', 'top', 'width', 'height', 'conf', 'text']
         df = pd.DataFrame(lines, columns=columns)
 
-        print(df)
-
         return df
         # data = pytesseract.image_to_data(img, config=config)
         # s = io.StringIO(data)
@@ -135,21 +135,32 @@ class OCR:
     @param boxes
     '''
 
+    # @staticmethod
+    # def drawBoundingBox(img, boxes):
+    #     red = (0, 0, 255)
+    #     font = cv2.FONT_HERSHEY_SIMPLEX
+    #
+    #     for i, box in enumerate(boxes.splitlines()):
+    #         if i == 0:
+    #             continue
+    #
+    #         box = box.split()
+    #
+    #         if len(box) == 12:
+    #             x, y, w, h = int(box[6]), int(box[7]), int(box[8]), int(box[9])
+    #             cv2.rectangle(img, (x, y), (w + x, h + y), red, 1)
+    #             cv2.putText(img, box[11] + ' ' + str(i), (x, y), font, 0.5, red, 1)
+
     @staticmethod
     def drawBoundingBox(img, boxes):
         red = (0, 0, 255)
         font = cv2.FONT_HERSHEY_SIMPLEX
 
-        for i, box in enumerate(boxes.splitlines()):
-            if i == 0:
-                continue
-
-            box = box.split()
-
-            if len(box) == 12:
-                x, y, w, h = int(box[6]), int(box[7]), int(box[8]), int(box[9])
-                cv2.rectangle(img, (x, y), (w + x, h + y), red, 1)
-                cv2.putText(img, box[11] + ' ' + str(i), (x, y), font, 0.5, red, 1)
+        for i, box in boxes.iterrows():
+            x, y, w, h = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+            cv2.rectangle(img, (x, y), (w + x, h + y), red, 1)
+            text = f"{box['text']} {i}"
+            cv2.putText(img, text, (x, y), font, 0.5, red, 1)
 
     '''
     Check whether the confidence scores of the image is high enough in order to determine native and non-native pdf
@@ -186,7 +197,7 @@ class OCR:
 
     @staticmethod
     def KPJAdjustment(data):
-        first_column = {'left': 0, 'top': data['top'][0], 'width': 0, 'height': 0, 'conf': 0, 'text': 'Item'}
+        first_column = {'left': 0, 'top': data['top'][0], 'width': 0, 'height': 0, 'conf': 0, 'text': 'ITEM'}
         # Insert the new row at the beginning of the DataFrame
         data = pd.concat([pd.DataFrame(first_column, index=[0]), data]).reset_index(drop=True)
 
