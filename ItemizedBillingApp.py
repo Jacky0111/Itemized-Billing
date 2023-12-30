@@ -135,10 +135,10 @@ class ItemizedBillingApp:
                 bill_df = ocr.runner()
 
                 print('-------------------------------------Text Transformation--------------------------------------')
-                tt = TextTransformation(bill_df)
-                bill_df = tt.spellCheck(col='Item')
+                # tt = TextTransformation(bill_df)
+                # bill_df = tt.spellCheck(col='ITEM')
 
-                bill_df.to_csv(f'{output_folder}/latest.csv', index=False)
+                # bill_df.to_csv(f'{output_folder}/latest.csv', index=False)
 
     '''
     A main menu that allows user to choose either create a dataset or run ocr.
