@@ -156,7 +156,7 @@ class TabularRule:
         return counter == 0
 
     '''
-    Rule 3: If the distance is lower than 40 and last element of the row.
+    Rule 3: If the distance is lower than 30 and last element of the row.
     @param dist
     @param counter
     @param data
@@ -164,19 +164,19 @@ class TabularRule:
     '''
     @staticmethod
     def rule3(dist, counter, data):
-        return dist < 40 and counter == len(data) - 1
+        return dist < 30 and counter == len(data) - 1
 
     '''
-    Rule 4: If the distance is lower than 40.
+    Rule 4: If the distance is lower than 30.
     @param dist
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
     def rule4(dist):
-        return dist < 40
+        return dist < 30
 
     '''
-    Rule 5: If the distance is higher or equal to 40 and last element of the row.
+    Rule 5: If the distance is higher or equal to 30 and last element of the row.
     @param dist
     @param counter
     @param data
@@ -184,16 +184,16 @@ class TabularRule:
     '''
     @staticmethod
     def rule5(dist, counter, data):
-        return dist >= 40 and counter == len(data) - 1
+        return dist >= 30 and counter == len(data) - 1
 
     '''
-    Rule 6: If the distance is higher or equal to 40.
+    Rule 6: If the distance is higher or equal to 30.
     @param dist
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
     def rule6(dist):
-        return dist >= 40
+        return dist >= 30
 
     '''
     Rule 7: For KPJ hospital bill, add "Item" as the first column name.
@@ -202,4 +202,4 @@ class TabularRule:
     '''
     @staticmethod
     def rule7(dist):
-        return dist >= 40
+        return dist >= 30
