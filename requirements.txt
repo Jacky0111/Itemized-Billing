@@ -18,7 +18,6 @@ pdf2image~=1.16.3
 matplotlib~=3.8.2
 setuptools~=69.0.3
 paddleocr~=2.7.0.3
-pytesseract~=0.3.10
 scikit-image~=0.22.0
 ultralytics~=8.0.165
 opencv-python~=4.9.0.80
