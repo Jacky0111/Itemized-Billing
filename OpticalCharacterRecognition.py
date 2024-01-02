@@ -32,6 +32,7 @@ class OCR:
         self.header = Header()
         self.body = Body()
         self.code = code
+        self.table_data_list.clear()
         self.output_path = output_path
         self.images_path = images_path
 
@@ -41,8 +42,6 @@ class OCR:
     '--psm 4' represents the Page Segmentation Mode and 4 assumes a single column of text.
     '''
     def runner(self):
-        self.df = pd.DataFrame()
-
         # Loop through all images
         for idx, file in enumerate(os.listdir(self.images_path)):
             # Construct the full path of the current image file
@@ -76,17 +75,24 @@ class OCR:
         print(tb_list)
         itemized_data = pd.DataFrame(tb_list[1:], columns=tb_list[0])
 
-        self.saveToCSV(itemized_data, 'itemized_data')
-        self.saveToCSV(self.df, 'image_to_data')
+        self.saveToExcel(self.df, 'image_to_data')
+        self.saveToExcel(itemized_data, 'itemized_data')
 
         return itemized_data
 
     '''
-    Saved recognized text to json file
+    Saved recognized text to csv file
     @param path
     '''
     def saveToCSV(self, data, name):
         data.to_csv(f'{self.output_path}/{name}.csv', index=False)
+
+    '''
+    Saved recognized text to xlsx file
+    @param path
+    '''
+    def saveToExcel(self, data, name):
+        data.to_excel(f'{self.output_path}/{name}.xlsx', index=False)
 
     '''
     Perform image_to_data using pytesseract and store the data into DataFrame
@@ -122,35 +128,12 @@ class OCR:
         df = pd.DataFrame(lines, columns=columns)
 
         return df
-        # data = pytesseract.image_to_data(img, config=config)
-        # s = io.StringIO(data)
-        # df = pd.read_csv(s, sep="\t")
-        # df = df.dropna()
-        # df = df.reset_index(drop=True)  # Reset the index
-        # return data, df
 
     '''
     Draw the bounding box based on the coordinate from pytesseract image to data
     @param img
     @param boxes
     '''
-
-    # @staticmethod
-    # def drawBoundingBox(img, boxes):
-    #     red = (0, 0, 255)
-    #     font = cv2.FONT_HERSHEY_SIMPLEX
-    #
-    #     for i, box in enumerate(boxes.splitlines()):
-    #         if i == 0:
-    #             continue
-    #
-    #         box = box.split()
-    #
-    #         if len(box) == 12:
-    #             x, y, w, h = int(box[6]), int(box[7]), int(box[8]), int(box[9])
-    #             cv2.rectangle(img, (x, y), (w + x, h + y), red, 1)
-    #             cv2.putText(img, box[11] + ' ' + str(i), (x, y), font, 0.5, red, 1)
-
     @staticmethod
     def drawBoundingBox(img, boxes):
         red = (0, 0, 255)
