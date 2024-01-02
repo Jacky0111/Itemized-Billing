@@ -9,9 +9,6 @@ from Body import Body
 from Header import Header
 from TabularRule import TabularRule
 
-import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
 
 class OCR:
     bill = None
@@ -95,7 +92,7 @@ class OCR:
         data.to_excel(f'{self.output_path}/{name}.xlsx', index=False)
 
     '''
-    Perform image_to_data using pytesseract and store the data into DataFrame
+    Perform image_to_data using PaddleOCR and store the data into DataFrame
     @param img
     @param config
     @return data, df
