@@ -1,4 +1,3 @@
-import re
 import os
 import wx
 import cv2
@@ -8,7 +7,6 @@ from datetime import datetime
 from Detect import Detect
 from Conversion.Conversion import Converter
 from OpticalCharacterRecognition import OCR
-from TextTransformation import TextTransformation
 
 class ItemizedBillingApp:
     text_path = None
