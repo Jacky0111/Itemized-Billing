@@ -2,7 +2,7 @@ from Bill import Bill
 
 
 class TabularRule:
-    id = None
+    identity = None
     head = None  # Header condition
     data = []
     row_list = []
@@ -16,7 +16,7 @@ class TabularRule:
         self.final_list = [None] * 4
 
     def runner(self):
-        self.id = 'Head' if self.head else 'Body'
+        self.identity = 'Head' if self.head else 'Body'
         self.tableRules()
         self.headerRules() if self.head else self.contentRules()
 
@@ -41,7 +41,7 @@ class TabularRule:
                 xx1 = x1
                 xx2 = x1 + w1
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=text, identity=self.id)
+                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=text, identity=self.identity)
                 self.row_list = [grouped_bill]
 
             elif TabularRule.rule2(index):
@@ -54,7 +54,7 @@ class TabularRule:
                 xx1 = xx1 if xx1 else x2
                 xx2 = x1 + w1
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
+                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
@@ -69,7 +69,7 @@ class TabularRule:
                 xx1 = x2
                 xx2 = x2 + w2
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
+                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
@@ -77,7 +77,7 @@ class TabularRule:
                 xx1 = x1
                 xx2 = x1 + w1
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
+                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
@@ -88,7 +88,7 @@ class TabularRule:
                 xx1 = x2 if not xx1 else xx1
                 xx2 = x2 + w2
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.id)
+                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
