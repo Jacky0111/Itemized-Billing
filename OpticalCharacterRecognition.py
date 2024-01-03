@@ -4,8 +4,6 @@ import pandas as pd
 from paddleocr import PaddleOCR
 
 from Bill import Bill
-from Body import Body
-from Header import Header
 from TabularRule import TabularRule
 
 
