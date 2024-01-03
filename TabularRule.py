@@ -21,9 +21,9 @@ class TabularRule:
         self.headerRules() if self.head else self.contentRules()
 
     def tableRules(self):
-        xx1 = None
-        xx2 = None
         rule4 = False
+        temp_x1 = None
+        temp_x2 = None
         content = ''
 
         for index, row in enumerate(self.data):
@@ -38,46 +38,46 @@ class TabularRule:
 
             if TabularRule.rule1(self.data):
                 print('Comply Rule 1')
-                xx1 = x1
-                xx2 = x1 + w1
+                temp_x1 = x1
+                temp_x2 = x1 + w1
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=text, identity=self.identity)
+                grouped_bill = Bill(x=temp_x1, width=temp_x2-temp_x1, text=text, identity=self.identity)
                 self.row_list = [grouped_bill]
 
             elif TabularRule.rule2(index):
                 print('Comply Rule 2')
                 content = text
-                xx1 = x1
+                temp_x1 = x1
 
             elif TabularRule.rule3(distance, index, self.data):
                 print('Comply Rule 3')
-                xx1 = xx1 if xx1 else x2
-                xx2 = x1 + w1
+                temp_x1 = temp_x1 if temp_x1 else x2
+                temp_x2 = x1 + w1
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
+                grouped_bill = Bill(x=temp_x1, width=temp_x2-temp_x1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
             elif TabularRule.rule4(distance):
                 print('Comply Rule 4')
                 content += ' ' + text
-                xx1 = x2 if not rule4 else xx1
+                temp_x1 = x2 if not rule4 else temp_x1
                 rule4 = True
 
             elif TabularRule.rule5(distance, index, self.data):
                 print('Comply Rule 5')
-                xx1 = x2
-                xx2 = x2 + w2
+                temp_x1 = x2
+                temp_x2 = x2 + w2
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
+                grouped_bill = Bill(x=temp_x1, width=temp_x2-temp_x1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
                 content = text
-                xx1 = x1
-                xx2 = x1 + w1
+                temp_x1 = x1
+                temp_x2 = x1 + w1
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
+                grouped_bill = Bill(x=temp_x1, width=temp_x2-temp_x1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
@@ -85,17 +85,16 @@ class TabularRule:
                 print('Comply Rule 6')
                 rule4 = False
                 rule6 = True
-                xx1 = x2 if not xx1 else xx1
-                xx2 = x2 + w2
+                temp_x1 = x2 if not temp_x1 else temp_x1
+                temp_x2 = x2 + w2
 
-                grouped_bill = Bill(x=xx1, width=xx2-xx1, text=content, identity=self.identity)
+                grouped_bill = Bill(x=temp_x1, width=temp_x2-temp_x1, text=content, identity=self.identity)
 
                 self.row_list.append(grouped_bill)
 
                 content = text
 
-            xx1 = 0 if rule6 else xx1
-            xx2 = 0 if rule6 else xx2
+            temp_x1, temp_x2 = (0, 0) if rule6 else (temp_x1, temp_x2)
 
     def headerRules(self):
         midpoint = 0
@@ -134,8 +133,6 @@ class TabularRule:
             for x1, x2 in self.col_range
             if x1 < val.x < x2 and x1 < val.x + val.width < x2
         ]
-
-        print(self.final_list)
 
     '''
     Rule 1: If the row only has 1 element.
