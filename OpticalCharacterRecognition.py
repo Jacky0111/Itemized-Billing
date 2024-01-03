@@ -1,5 +1,4 @@
 import os
-import io
 import cv2
 import pandas as pd
 from paddleocr import PaddleOCR
@@ -98,7 +97,7 @@ class OCR:
     @return data, df
     '''
     @staticmethod
-    def imageToData(img, config):
+    def imageToData(img):
         paddle = PaddleOCR(use_angle_cls=True, lang='en')
         result = paddle.ocr(img, cls=True)
 
