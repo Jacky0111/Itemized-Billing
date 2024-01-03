@@ -12,7 +12,7 @@ class Body(Bill):
     Execute function
     '''
     def runner(self):
-        print('------------------------------------  -This row is Body---------------------------------------')
+        print('---------------------------------------This row is Body---------------------------------------')
         print('-------------------------------------Assigning Coordinate-------------------------------------')
         whole = super().assignCoordinate(df)
 
