@@ -109,7 +109,6 @@ class ItemizedBillingApp:
                 # Convert the format to xywh and draw lines on the image
                 for idx, value in enumerate(values):
                     x, y, w, h = value[0], value[1], value[2], value[3]
-                    x = int((x - w / 2 + h / 2) * tb_img.shape[1])
                     y = int((y + h / 2) * tb_img.shape[0])
                     w = int(w * tb_img.shape[1])
                     h = int(h * tb_img.shape[0])
@@ -129,13 +128,9 @@ class ItemizedBillingApp:
 
                 print('-----------------------------------------Applying OCR-----------------------------------------')
                 ocr = OCR(hospital_code, output_folder, row_folder)
-                bill_df = ocr.runner()
+                ocr.runner()
 
-                print('-------------------------------------Text Transformation--------------------------------------')
-                # tt = TextTransformation(bill_df)
-                # bill_df = tt.spellCheck(col='ITEM')
-
-                # bill_df.to_csv(f'{output_folder}/latest.csv', index=False)
+                print('---------------------------------------------End----------------------------------------------')
 
     '''
     A main menu that allows user to choose either create a dataset or run ocr.
