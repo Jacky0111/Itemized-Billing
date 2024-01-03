@@ -8,14 +8,13 @@ from Detect import Detect
 from Conversion.Conversion import Converter
 from OpticalCharacterRecognition import OCR
 
+
 class ItemizedBillingApp:
-    text_path = None
     images_path = None
     dataset_path = None
     output_folder_path = []
 
     def __init__(self):
-        self.text_path = None
         self.images_path = None
         self.dataset_path = None
         self.output_folder_path.clear()
@@ -169,7 +168,6 @@ class ItemizedBillingApp:
     @param subfolder: a string/list of strings representing the name of the subfolder(s) are to be created.
     @param parent: a string representing the name of the parent folder. Default is None.
     @return folder_path: string or list of strings representing the created folder paths.
-
     '''
     @staticmethod
     def setFolderPath(subfolder, parent=None):
