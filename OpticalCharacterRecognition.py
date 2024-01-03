@@ -10,8 +10,6 @@ from TabularRule import TabularRule
 class OCR:
     bill = None
     code = None
-    body = None
-    header = None
     output_path = None  # Current save path
     images_path = None  # Input images path
     is_non_native = False
@@ -23,8 +21,6 @@ class OCR:
 
     def __init__(self, code, output_path, images_path):
         self.bill = Bill()
-        self.header = Header()
-        self.body = Body()
         self.code = code
         self.table_data_list.clear()
         self.output_path = output_path
@@ -43,7 +39,7 @@ class OCR:
             img = cv2.imread(img_path)
 
             # Process the image using the imageToData method
-            temp_df = self.imageToData(img, r'--oem 3 --psm 4 -l eng')
+            temp_df = self.imageToData(img)
             temp_df = temp_df.sort_values(by='left', ascending=True)
 
             # Additional step to check whether the header is correct detected
@@ -66,13 +62,10 @@ class OCR:
 
         # Use list comprehension to create tb_list in a more concise way
         tb_list = [[element.text for element in row] for row in self.table_data_list]
-        print(tb_list)
         itemized_data = pd.DataFrame(tb_list[1:], columns=tb_list[0])
 
         self.saveToExcel(self.df, 'image_to_data')
         self.saveToExcel(itemized_data, 'itemized_data')
-
-        return itemized_data
 
     '''
     Saved recognized text to csv file
