@@ -1,3 +1,6 @@
+# Heuristic rules process tabular data in a document
+
+
 from Bill import Bill
 
 
@@ -15,11 +18,17 @@ class TabularRule:
         self.row_list = []
         self.final_list = [None] * 4
 
+    '''
+    Execution function
+    '''
     def runner(self):
         self.identity = 'Head' if self.head else 'Body'
         self.tableRules()
         self.headerRules() if self.head else self.contentRules()
 
+    '''
+    Assemble raw text into tabular format based on defined rules.
+    '''
     def tableRules(self):
         rule4 = False
         temp_x1 = None
@@ -96,6 +105,9 @@ class TabularRule:
 
             temp_x1, temp_x2 = (0, 0) if rule6 else (temp_x1, temp_x2)
 
+    '''
+    Apply rules specific to the header row.
+    '''
     def headerRules(self):
         midpoint = 0
         self.col_range.clear()
@@ -126,6 +138,9 @@ class TabularRule:
 
         self.col_range.extend((ele.x, ele.x + ele.width) for ele in self.row_list)
 
+    '''
+    Apply rules specific to content rows.
+    '''
     def contentRules(self):
         self.final_list = [
             val.text
@@ -135,8 +150,8 @@ class TabularRule:
         ]
 
     '''
-    Rule 1: If the row only has 1 element.
-    @param data
+    Rule 1: Check if the row only has 1 element.
+    @param data: A list of data rows.
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
@@ -144,8 +159,8 @@ class TabularRule:
         return len(data) == 1
 
     '''
-    Rule 2: If the first element of the row.
-    @param counter
+    Rule 2: Check if the row is the first element.
+    @param counter: An integer representing the row index.
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
@@ -153,10 +168,10 @@ class TabularRule:
         return counter == 0
 
     '''
-    Rule 3: If the distance is lower than 30 and last element of the row.
-    @param dist
-    @param counter
-    @param data
+    Rule 3: Check if the distance is lower than 30 and the row is last element. 
+    @param dist: A integer representing the distance.
+    @param counter: An integer representing the row index.
+    @param data: A list of data rows.
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
@@ -164,8 +179,8 @@ class TabularRule:
         return dist < 30 and counter == len(data) - 1
 
     '''
-    Rule 4: If the distance is lower than 30.
-    @param dist
+    Rule 4: Check if the distance is lower than 30.
+    @param dist: A integer representing the distance.
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
@@ -173,10 +188,10 @@ class TabularRule:
         return dist < 30
 
     '''
-    Rule 5: If the distance is higher or equal to 30 and last element of the row.
-    @param dist
-    @param counter
-    @param data
+    Rule 5: Check if the distance is higher or equal to 30 and the row is last element.
+    @param dist: A integer representing the distance.
+    @param counter: An integer representing the row index.
+    @param data: A list of data rows.
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
@@ -184,8 +199,8 @@ class TabularRule:
         return dist >= 30 and counter == len(data) - 1
 
     '''
-    Rule 6: If the distance is higher or equal to 30.
-    @param dist
+    Rule 6: Check if the distance is higher or equal to 30.
+    @param dist: A integer representing the distance.
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
@@ -194,7 +209,7 @@ class TabularRule:
 
     '''
     Rule 7: For KPJ hospital bill, add "Item" as the first column name.
-    @param dist
+    @param dist: A integer representing the distance.
     @return True if rule is applied, False otherwise.
     '''
     @staticmethod
