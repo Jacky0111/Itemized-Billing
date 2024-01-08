@@ -1,3 +1,6 @@
+# Facilitates the PDF to image conversion functionality
+
+
 import os
 from pdf2image import convert_from_path
 
@@ -10,6 +13,11 @@ class Converter:
     def __init__(self):
         pass
 
+    '''
+    Convert PDF files to images.
+    @param input_folder: A string representing the path to the folder containing PDF files.
+    @param output_folder: A string representing the path to the folder where the converted images will be saved.
+    '''
     @staticmethod
     def pdfToImages(input_folder, output_folder):
         pdf_files = [file for file in os.listdir(input_folder) if file.endswith('.pdf')]
@@ -26,6 +34,12 @@ class Converter:
 
             Converter.saveImages(images, output_folder_path, pdf_name)
 
+    '''
+    Save converted images to the output folder.
+    @param images: A list of images to be saved.
+    @param output_folder: A string representing the path to the folder where the images will be saved.
+    @param pdf_name: A string representing the name of the original PDF file (without extension).
+    '''
     @staticmethod
     def saveImages(images, output_folder, pdf_name):
         for idx, image in enumerate(images):
