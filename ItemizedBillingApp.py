@@ -1,3 +1,6 @@
+# Empowers the end user to make choices between performing document conversion and optical character recognition (OCR)
+
+
 import os
 import wx
 import cv2
