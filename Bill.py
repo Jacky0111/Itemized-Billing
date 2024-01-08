@@ -7,6 +7,9 @@ class Bill:
     text = None  # Text Recognized
     identity = None  # Either header or body
 
+    '''
+    Initialize a Bill object with specific attributes.
+    '''
     def __init__(self, x=0, y=0, width=0, height=0, conf=0, text=None, identity=None):
         self.x = x
         self.y = y
@@ -18,6 +21,8 @@ class Bill:
 
     '''
     Assign the coordinate for each recognize text.
+    @param df: A DataFrame containing information about recognized text from image.
+    @return body: A list of Bill objects, each representing a recognized text with assigned coordinates.
     '''
     def assignCoordinate(self, df):
         body = []
@@ -32,6 +37,9 @@ class Bill:
             body.append(bill)
         return body
 
+    '''
+    Allocate the content to respective cell.
+    '''
     def allocateContent(self):
         pass
 
