@@ -68,24 +68,25 @@ class OCR:
         self.saveToExcel(itemized_data, 'itemized_data')
 
     '''
-    Saved recognized text to csv file
-    @param path
+    Save the itemized data to CSV file.
+    @param data: a Dataframe containing itemized data after Tabular Rule step
+    @param name: a String representing the CSV file name
     '''
     def saveToCSV(self, data, name):
         data.to_csv(f'{self.output_path}/{name}.csv', index=False)
 
     '''
-    Saved recognized text to xlsx file
-    @param path
+    Save the itemized data to Excel file.
+    @param data: a Dataframe containing itemized data after Tabular Rule step
+    @param name: a String representing the Excel file name
     '''
     def saveToExcel(self, data, name):
         data.to_excel(f'{self.output_path}/{name}.xlsx', index=False)
 
     '''
-    Perform image_to_data using PaddleOCR and store the data into DataFrame
-    @param img
-    @param config
-    @return data, df
+    Utilizes the PaddleOCR library to perform OCR and store the data into DataFrame.
+    @param img: a NumPy array representing the input image.
+    @return df: a Dataframe containing information about recognized text from image.
     '''
     @staticmethod
     def imageToData(img):
@@ -117,7 +118,7 @@ class OCR:
         return df
 
     '''
-    Draw the bounding box based on the coordinate from pytesseract image to data
+    Draws bounding boxes on an image based on the OCR coordinates stored in the DataFrame.    
     @param img
     @param boxes
     '''
@@ -147,6 +148,9 @@ class OCR:
         except ZeroDivisionError:
             print(f'{df_conf.shape[0]} / {df.shape[0]} = ALL PASS')
 
+    '''
+    Checks the hospital code and performs adjustments on the extracted data based on the hospital.
+    '''
     def checkHospital(self, data):
         if self.code == 'BAGAN':
             return OCR.BAGANAdjustment(data)
