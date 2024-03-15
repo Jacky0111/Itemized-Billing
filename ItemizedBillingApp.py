@@ -66,6 +66,9 @@ class ItemizedBillingApp:
             img_list = [os.path.splitext(os.path.basename(path))[0] for path in img_path if path.lower()]
             subfolder = ['OCR_Output/' + name for name in img_list]
 
+            print(f'img_list: {img_list}')
+            print(f'subfolder: {subfolder}')
+
             self.output_folder_path = self.setFolderPath(subfolder=subfolder)
 
             # Copy the image from the source path to the destination path
