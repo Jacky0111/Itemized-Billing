@@ -5,6 +5,7 @@
 *.xml
 *.iml
 Crop_Images
-CVAT/KPJ
-OCR_Output
-runs
+/CVAT/KPJ
+/OCR_Output
+/runs
+/Conversion
