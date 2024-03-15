@@ -28,8 +28,6 @@ class OCR:
 
     '''
     Execution function
-    '--oem 3' uses default LSTM OCR engine mode.
-    '--psm 4' represents the Page Segmentation Mode and 4 assumes a single column of text.
     '''
     def runner(self):
         # Loop through all images
