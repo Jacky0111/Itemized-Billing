@@ -23,12 +23,12 @@ ultralytics~=8.0.165
 opencv-python~=4.9.0.80
 thop~=0.1.1.post2209072238
 
-torch~=2.0.1
+torch~=1.13.1+cu116
 torch-utils~=0.1.2
 torchaudio~=0.13.1+cu116
-torchvision~=0.15.2
+torchvision~=0.14.1+cu116
 
-# pip install torch~=1.13.1 torchvision~==0.14.1+cu116 torchaudio~==0.13.1+cu116 --index-url https://download.pytorch.org/whl/cu116
+# pip install torch==1.13.1 torchvision===0.14.1+cu116 torchaudio===0.13.1+cu116 --index-url https://download.pytorch.org/whl/cu116
 
 
 
