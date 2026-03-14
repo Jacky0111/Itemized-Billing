@@ -6,9 +6,12 @@ from pdf2image import convert_from_path
 
 
 class Converter:
-    # Set the path to the Poppler binary folder
-    poppler_path = r'C:\poppler-23.01.0\Library\bin'
-    os.environ["PATH"] += os.pathsep + poppler_path
+    # Set the path to the Poppler binary folder. Override with POPPLER_PATH if needed.
+    poppler_path = os.environ.get("POPPLER_PATH")
+    if not poppler_path and os.name == "nt":
+        poppler_path = r'C:\poppler-23.01.0\Library\bin'
+    if poppler_path:
+        os.environ["PATH"] += os.pathsep + poppler_path
 
     def __init__(self):
         pass
@@ -30,7 +33,7 @@ class Converter:
             os.makedirs(output_folder_path, exist_ok=True)
 
             print(f"Converting {pdf_name}.pdf to images...")
-            images = convert_from_path(path, dpi=300)
+            images = convert_from_path(path, dpi=300, poppler_path=Converter.poppler_path)
 
             Converter.saveImages(images, output_folder_path, pdf_name)
 

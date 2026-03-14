@@ -1,6 +1,6 @@
 import os
-# Define the path
-path = r"C:\Users\ChiaChungLim\PycharmProjects\Consignment-Itemized-Data\data\KPJ_01"
+# Define the path (override with RENAME_DIR to improve portability)
+path = os.environ.get("RENAME_DIR", r"C:\Users\ChiaChungLim\PycharmProjects\Consignment-Itemized-Data\data\KPJ_01")
 # Change directory
 os.chdir(path)
 # List all files in the directory

@@ -25,6 +25,7 @@ class OCR:
         self.table_data_list.clear()
         self.output_path = output_path
         self.images_path = images_path
+        self.paddle = PaddleOCR(use_angle_cls=True, lang='en')
 
     '''
     Execution function
@@ -37,7 +38,7 @@ class OCR:
             img = cv2.imread(img_path)
 
             # Process the image using the imageToData method
-            temp_df = self.imageToData(img)
+            temp_df = self.imageToData(img, self.paddle)
             temp_df = temp_df.sort_values(by='left', ascending=True)
 
             # Additional step to check whether the header is correct detected
@@ -87,12 +88,16 @@ class OCR:
     @return df: a Dataframe containing information about recognized text from image.
     '''
     @staticmethod
-    def imageToData(img):
-        paddle = PaddleOCR(use_angle_cls=True, lang='en')
+    def imageToData(img, paddle=None):
+        if paddle is None:
+            paddle = PaddleOCR(use_angle_cls=True, lang='en')
         result = paddle.ocr(img, cls=True)
 
         # Extract information from the result
         lines = []
+        if not result:
+            return pd.DataFrame(columns=['left', 'top', 'width', 'height', 'conf', 'text'])
+
         for line in result:
             if line is None:
                 continue
@@ -178,5 +183,4 @@ class OCR:
     @staticmethod
     def RSHAdjustment(data):
         return
-
 

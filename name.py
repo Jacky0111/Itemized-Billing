@@ -35,8 +35,8 @@ def rename_pdf_files(directory_path, filtered_list):
 # Example usage
 if __name__ == "__main__":
     # Provide the file path
-    directory_path = "C:/Users/CP1/Downloads/Bill/Bill"
-    excel_file_path = "C:/Users/CP1/Downloads/claim_v1.xlsx"
+    directory_path = os.environ.get("BILL_DIR", "C:/Users/CP1/Downloads/Bill/Bill")
+    excel_file_path = os.environ.get("CLAIM_XLSX", "C:/Users/CP1/Downloads/claim_v1.xlsx")
 
     # Step 1: Get the list of file names
     file_names = get_file_names(directory_path)
